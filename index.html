@@ -15,38 +15,52 @@
             <div ng-hide="loggedIn" id="loginInfo">Logged in as: {{ loggedInName }}<br />Role: {{ whoIsLoggedIn }}</div>
             <div ng-controller="logout" ng-hide="loggedIn" ng-click="logOut()" id="logout"><p>logout</p></div>
         </div>
-             <div ng-controller="menu" id="menu">
-                 <!-- admin menu -->
-                 <div ng-controller="adminMenu" id="adminMenu" ng-hide="whoIsLoggedIn!='admin'">
-                     <div class="list-group">
-                         <button type="button" class="list-group-item" ng-click="adminCompany = ! adminCompany">Company Options</button>
-                         <div ng-show="adminCompany">
-                             <ul class="nav nav-pills nav-stacked">
-                                 <li ng-click="openCreateCompany()"><a href="">Create Company</a></li>
-                                 <li><a href="">Remove Company</a></li>
-                                 <li><a href="">Update Company</a></li>
-                                 <li ng-click="openGetCompanyById()"><a href="">Get Company by Id</a></li>
-                                 <li><a href="">Get Company by Name</a></li>
-                                 <li ng-click="openGetAllCompanies();submitGetAllCompanies()"><a href="">Get all Companies</a></li>
-                             </ul>
-                         </div>
-                         <button type="button" class="list-group-item" ng-click="adminCustomer = ! adminCustomer">Customer Options</button>
-                         <div ng-show="adminCustomer">
-                             <ul class="nav nav-pills nav-stacked">
-                                 <li><a href="">Create Customer</a></li>
-                                 <li><a href="">Remove Customer</a></li>
-                                 <li><a href="">Update Customer</a></li>
-                                 <li><a href="">Get Customer by Id</a></li>
-                                 <li><a href="">Get Customer by Name</a></li>
-                                 <li><a href="">Get all Customers</a></li>
-                             </ul>
-                         </div>
-                     </div>
-                 </div>
-                 <!-- admin menu ends -->
-          <div ng-controller="customerMenu" id="customer-menu" ng-hide="whoIsLoggedIn!='customer'"><p>customer menu</p></div>
-          <div ng-controller="companyMenu" id="company-menu" ng-hide="whoIsLoggedIn!='company'"><p>company menu</p></div>
-      </div>
+        <div>
+            <div ng-controller="menu" id="menu">
+                <!-- admin menu -->
+                <div ng-controller="adminMenu" id="adminMenu" ng-hide="whoIsLoggedIn!='admin'">
+                    <div class="list-group">
+                        <button type="button" class="list-group-item" ng-click="adminCompany = ! adminCompany">Company Options</button>
+                        <div ng-show="adminCompany">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li ng-click="openCreateCompany()"><a href="">Create Company</a></li>
+                                <li><a href="">Remove Company</a></li>
+                                <li><a href="">Update Company</a></li>
+                                <li ng-click="openGetCompanyById()"><a href="">Get Company by Id</a></li>
+                                <li><a href="">Get Company by Name</a></li>
+                                <li ng-click="openGetAllCompanies();submitGetAllCompanies()"><a href="">Get all Companies</a></li>
+                            </ul>
+                        </div>
+                        <button type="button" class="list-group-item" ng-click="adminCustomer = ! adminCustomer">Customer Options</button>
+                        <div ng-show="adminCustomer">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="">Create Customer</a></li>
+                                <li><a href="">Remove Customer</a></li>
+                                <li><a href="">Update Customer</a></li>
+                                <li><a href="">Get Customer by Id</a></li>
+                                <li><a href="">Get Customer by Name</a></li>
+                                <li><a href="">Get all Customers</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- admin menu ends -->
+                <div ng-controller="customerMenu" id="customer-menu" ng-hide="whoIsLoggedIn!='customer'"><p>customer menu</p></div>
+                <div ng-controller="companyMenu" id="company-menu" ng-hide="whoIsLoggedIn!='company'">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li ng-click="openCreateCoupon()"> <a href="">Create coupon</a></li>
+                        <li> <a href="">remove coupon</a></li>
+                        <li> <a href="">update coupon</a></li>
+                        <li> <a href="">get coupon</a></li>
+                        <li> <a href="">get all coupons</a></li>
+                        <li> <a href="">get coupon by type</a></li>
+                        <li> <a href="">get coupon by date</a></li>
+                        <li> <a href="">get coupon by price</a></li>
+                        <li> <a href="">get coupon by title</a></li>
+
+                    </ul>
+            </div>
+        </div>
       <div ng-controller="mainPage" id="main">
 			
 			<div ng-controller="loginController" ng-show="loggedIn">
@@ -125,8 +139,84 @@
               </div>
           </div>
           <!-- admin page ends -->
-          <div ng-controller="customerPage" ng-hide="whoIsLoggedIn!='customer'">customer page</div>
-          <div ng-controller="companyPage" ng-hide="whoIsLoggedIn!='company'">company page</div>
+          <div ng-controller="customerPage" ng-hide="whoIsLoggedIn!='customer'">
+             
+          </div>
+          <div ng-controller="companyPage" ng-hide="whoIsLoggedIn!='company'">
+              <div ng-show="createCoupon && whoIsLoggedIn =='company'">
+                 <h2>Create coupon</h2> 
+                  <br />
+             
+                  <form class="form-inline">
+                      <div class="form-group">
+                          <label class="sr-only" for="inputTitle">Title</label>
+                          <br />
+                          <p>Title</p>
+                          <input type="text" class="form-control" ng-model="title">
+                      </div>
+                      <div class="form-group">
+                          <label class="sr-only" for="inputTitle">Title</label>
+                          <br />
+                          <p>amount</p>
+                          <input type="number" min="1" max="1000" class="form-control" ng-model="amount">
+                      </div>
+                      <div class="form-group">
+                          <label class="sr-only" for="inputTitle">Title</label>
+                          <br />
+                          <p>type</p>
+                          <select class="form-control" ng-model="type">
+                              <option ng-name="RESTAURANTS" value="Admin">RESTAURANTS</option>
+                              <option ng-name="ELECTRICITY">ELECTRICITY</option>
+                              <option ng-name="FOOD">FOOD</option>
+                              <option ng-name="HEALTH">HEALTH</option>
+                              <option ng-name="SPORTS">SPORTS</option>
+                              <option ng-name="CAMPING">CAMPING</option>
+                              <option ng-name="TRAVELLING">TRAVELLING</option>
+                              <option ng-name="CLOTHES">CLOTHES</option>
+                          </select>
+                      </div>
+                      <br />
+                      <div class="form-group">
+                          <label class="sr-only" for="inputTitle">price</label>
+                          <br />
+                          <p>price</p>
+                          <input type="number" min="1" max="1000" class="form-control" ng-model="price">
+                      </div>
+                      <div class="form-group">
+                          <label class="sr-only" for="inputTitle">image</label>
+                          <br />
+                          <p>image</p>
+                          <input type="file" class="form-control" ng-model="image">
+                      </div>
+                      <br />
+
+                      <div class="form-group">
+                          <label class="sr-only" for="startDate">start date</label>
+                          <br />
+                          <p>start date</p>
+                          <input type="date" class="form-control" ng-model="startDate">
+                      </div>
+                      <div class="form-group">
+                          <label class="sr-only" for="endDate">end date</label>
+                          <br />
+                          <p>end date</p>
+                          <input type="date" class="form-control" ng-model="endDate">
+                      </div>
+                      <br />
+                      <div class="form-group">
+                          <label class="sr-only" for="inputTitle">message</label>
+                          <br />
+                          <p>message</p>
+                          <textarea class="form-control" ng-model="message"></textarea>
+                      </div>
+                      <br />
+                      <br />
+                      <br />
+                      <button type="submit" class="btn btn-default" ng-click="submitCreateCoupon()">Create</button>
+                  </form>
+                  <div id="formInfo">{{ result }}</div>
+              </div>
+          </div>
         
     </div>
     </div>

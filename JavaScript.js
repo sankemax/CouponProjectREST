@@ -92,13 +92,14 @@
 			$scope.adminCustomer = false;
 		})
 		
-        // admin menu
+        // admin menuopenCreateCompany
 		.controller('adminMenu', function($rootScope, $scope, $http) {
 			
             // add all ng-show = false here
 			$rootScope.createCompany = false;
 			$rootScope.getCompanyById = false;
 			$rootScope.getAllCompanies = false;
+			$rootScope.createCoupon = false;
 
             // create company
 			$scope.openCreateCompany = function () {
@@ -134,7 +135,10 @@
 		})
 		
         // company menu
-		.controller('companyMenu', function($rootScope, $scope, $http) {
+		.controller('companyMenu', function ($rootScope, $scope, $http) {
+		    $scope.openCreateCoupon = function () {
+		        $rootScope.createCoupon = (!$rootScope.createCoupon)
+		    }
 		})
 		
         // main page
@@ -252,10 +256,55 @@
 		    }
 		})
 		
-		.controller('customerPage', function($rootScope, $scope, $http) {
+		.controller('customerPage', function ($rootScope, $scope, $http) {
+		   
 		})
 		
-		.controller('companyPage', function($rootScope, $scope, $http) {
+		.controller('companyPage', function ($rootScope, $scope, $http) {
+		    // create coupon
+		    $scope.submitCreateCoupon = function () {
+
+	//	        if ($scope.title != null && $scope.amount != null && $scope.type != null
+      //              && $scope.price != null && $scope.image != null && $scope.startDate != null
+       //             && $scope.endDate != null && $scope.message != null) {
+		        var startDate = new Date($scope.startDate);
+		        var startDate = new Date($scope.endDate);
+		            $http({
+		                method: 'POST',
+		                url: $rootScope.localHost + $rootScope.projectPath + 'company',
+		                data: {
+		                    "title": $scope.title,
+		                    "amount": $scope.amount.data,
+		                    "type": $scope.type,
+		                    "price": $scope.price,
+		                    "image": "image",
+		                    "startDate": startDate,
+		                    "endDate": endDate,
+		                    "message": $scope.message
+		                }
+		            })
+
+					.then(function successCallback(response) {
+
+					    $scope.loginResponse = response.data;
+					    $scope.result = $scope.loginResponse['success'];
+
+
+
+					}, function errorCallback(response) {
+
+					    $scope.loginResponse = response.data;
+					    $scope.result = $scope.loginResponse['error'];
+
+
+					});
+
+		//        } else {
+		//            $scope.result = "Fill in the form";
+		//        }
+
+		        $timeout(function () { $scope.result = null }, 1000);
+		    }
 		})
 		
 		
