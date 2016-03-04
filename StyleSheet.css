@@ -1,0 +1,44 @@
+{
+	text-align:center;
+}
+
+#logo {
+	border-style:solid;
+	height:100px;
+	width:100%;
+    text-align:left;
+}
+
+#menu {
+    border-style:solid;
+    float:left;
+	height:700px;
+	width:20%;
+}
+#main {
+    border-style:solid;
+    float:left;
+	height:700px;
+	width:80%;
+    -webkit-flex:1;
+    flex:1;
+    padding: 30px 30px 30px 30px;
+}
+#formInfo {
+	float:left;
+}
+
+#logout, #login, #loginInfo {
+	font-size:14px;
+	font-family:ariel;
+	width:200px;
+}
+
+#logout {
+	width:40px;
+}
+
+p:hover {
+	font-style: italic;
+	font-weight: bold;
+}
