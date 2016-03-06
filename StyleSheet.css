@@ -1,28 +1,29 @@
-{
-	text-align:center;
-}
-
 #logo {
-	border-style:solid;
 	height:100px;
 	width:100%;
     text-align:left;
+    padding-left:30px;
+}
+
+#logo-image {
+    height:auto;
+    width:200px;
+    margin-left:50%;
 }
 
 #menu {
-    border-style:solid;
     float:left;
 	height:700px;
 	width:20%;
+    padding-left:20px;
 }
 #main {
-    border-style:solid;
     float:left;
 	height:700px;
 	width:80%;
     -webkit-flex:1;
     flex:1;
-    padding: 30px 30px 30px 30px;
+    padding: 0px 60px 100px 60px;
 }
 #formInfo {
 	float:left;
@@ -38,7 +39,15 @@
 	width:40px;
 }
 
-p:hover {
-	font-style: italic;
-	font-weight: bold;
+.page-header {
+    padding-left:20px;
+}
+
+#footer {
+    position:fixed;
+    bottom:0px;
+    background-color:#b9aca1;
+    height:20px;
+    width:100%;
+    text-align:center;
 }
