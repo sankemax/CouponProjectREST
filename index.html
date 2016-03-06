@@ -60,7 +60,7 @@
                         <li> <a href="">remove coupon</a></li>
                         <li> <a href="">update coupon</a></li>
                         <li> <a href="">get coupon</a></li>
-                        <li> <a href="">get all coupons</a></li>
+                        <li ng-click="openPage('getCoupons');submitGetCoupons()"><a href="">Get All Coupons</a></li>
                         <li> <a href="">get coupon by type</a></li>
                         <li> <a href="">get coupon by date</a></li>
                         <li> <a href="">get coupon by price</a></li>
@@ -69,9 +69,9 @@
                     </ul>
             </div>
       </div>
-      <div ng-controller="mainPage" id="main">
-			
-			<div ng-controller="loginController" ng-show="loggedIn">
+        <div ng-controller="mainPage" id="main">
+
+            <div ng-controller="loginController" ng-show="loggedIn">
                 <form class="form-inline">
                     <div class="form-group">
                         <label class="sr-only" for="inputName">Name</label>
@@ -81,375 +81,417 @@
                         <label class="sr-only" for="inputPassword">Password</label>
                         <input type="password" class="form-control" id="inputPassword" placeholder="Password" ng-model="pass">
                     </div>
-                        <select class="form-control" ng-model="type">
-                            <option ng-name="Admin" value="Admin">Admin</option>
-                            <option ng-name="Customer">Customer</option>
-                            <option ng-name="Company">Company</option>
-                        </select>
+                    <select class="form-control" ng-model="type">
+                        <option ng-name="Admin" value="Admin">Admin</option>
+                        <option ng-name="Customer">Customer</option>
+                        <option ng-name="Company">Company</option>
+                    </select>
                     <button type="submit" class="btn btn-default" ng-click="processForm()">Sign in</button>
                 </form>
-             <div id="formInfo">{{ failure }}</div>
-          </div>
-          <!-- admin page -->
-          <div ng-controller="adminPage" ng-hide="whoIsLoggedIn!='admin'">
-              <div ng-show="pages.createCompany">
-                  Create Company
-                  <form class="form-inline">
-                      <div class="form-group">
-                          <label class="sr-only" for="inputName">Name</label>
-                          <input type="text" class="form-control" id="inputName" placeholder="Company Name" ng-model="name">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputPassword">Password</label>
-                          <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="pass">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputEmail">Password</label>
-                          <input type="text" class="form-control" id="inputEmail" placeholder="example@email.com" ng-model="email">
-                      </div>
-                      <button type="submit" class="btn btn-default" ng-click="submitCreateCompany()">Create</button>
-                  </form>
-                  <div id="formInfo">{{ results.createCompany }}</div>
-              </div>
-              <div ng-show="pages.removeCompany">
-                  Remove Company
-                  <form class="form-inline">
-                      <div class="form-group">
-                          <label class="sr-only" for="inputName">Name</label>
-                          <input type="text" class="form-control" id="inputName" placeholder="Company Name" ng-model="rName">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputPassword">Password</label>
-                          <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="rPass">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputEmail">Password</label>
-                          <input type="text" class="form-control" id="inputEmail" placeholder="example@email.com" ng-model="rEmail">
-                      </div>
-                      <button type="submit" class="btn btn-default" ng-click="submitRemoveCompany()">Remove</button>
-                  </form>
-                  <div id="formInfo">{{ results.removeCompany }}</div>
-              </div>
-              <div ng-show="pages.updateCompany">
-                  Update Company
-                  <form class="form-inline">
-                      <div class="form-group">
-                          <label class="sr-only" for="inputName">Name</label>
-                          <input type="text" class="form-control" id="inputName" placeholder="Company Name" ng-model="uName">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputPassword">Password</label>
-                          <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="uPass">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputEmail">Password</label>
-                          <input type="text" class="form-control" id="inputEmail" placeholder="example@email.com" ng-model="uEmail">
-                      </div>
-                      <button type="submit" class="btn btn-default" ng-click="submitUpdateCompany()">Update</button>
-                  </form>
-                  <div id="formInfo">{{ results.updateCompany }}</div>
-              </div>
-              <div ng-show="pages.getCompanyById">
-                  Get Company By Id
-                  <form class="form-inline">
-                      <select class="form-control" ng-model="selectedId">
-                          <option ng-repeat="id in compIds">{{ id }}</option>
-                      </select>
-                      <button type="submit" class="btn btn-default" ng-click="submitGetCompanyById()">Get Company</button>
-                  </form>
-                  <div id="result">
-                      <div id="formInfo" ng-show="results.getCompanyById['id'] == null">{{ results.getCompanyById }}</div>
-                      <table class="table" ng-show="results.getCompanyById['id'] != null">
-                          <thead>
-                              <tr>
-                                  <th>Id</th>
-                                  <th>Name</th>
-                                  <th>Password</th>
-                                  <th>Email</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <tr>
-                                  <td>{{ results.getCompanyById['id'] }}</td>
-                                  <td>{{ results.getCompanyById['name'] }}</td>
-                                  <td>{{ results.getCompanyById['pass'] }}</td>
-                                  <td>{{ results.getCompanyById['email'] }}</td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-              <div ng-show="pages.getCompanyByName">
-                  Get Company By Name
-                  <form class="form-inline">
-                          <select class="form-control" ng-model="selectedName" placeholder="Company Name">
-                              <option ng-repeat="name in compNames">{{ name }}</option>
-                          </select>
-                      <button type="submit" class="btn btn-default" ng-click="submitGetCompanyByName()">Get Company</button>
-                  </form>
-                  <div id="result">
-                      <div id="formInfo" ng-show="results.getCompanyByName['id'] == null">{{ results.getCompanyByName }}</div>
-                      <table class="table" ng-show="results.getCompanyByName['id'] != null">
-                          <thead>
-                              <tr>
-                                  <th>Id</th>
-                                  <th>Name</th>
-                                  <th>Password</th>
-                                  <th>Email</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <tr>
-                                  <td>{{ results.getCompanyByName['id'] }}</td>
-                                  <td>{{ results.getCompanyByName['name'] }}</td>
-                                  <td>{{ results.getCompanyByName['pass'] }}</td>
-                                  <td>{{ results.getCompanyByName['email'] }}</td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-              <div ng-show="pages.getAllCompanies">
-                  <div class="panel panel-default">
-                      <div class="panel-heading">Companies present in the system</div>
-                      <table class="table">
-                          <thead>
-                              <tr>
-                                  <th>Id</th>
-                                  <th>Name</th>
-                                  <th>Password</th>
-                                  <th>Email</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <tr ng-repeat="company in companies">
-                                  <td>{{ company.id }}</td>
-                                  <td>{{ company.name }}</td>
-                                  <td>{{ company.pass }}</td>
-                                  <td>{{ company.email }}</td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-              <div ng-show="pages.createCustomer">
-                  Create Customer
-                  <form class="form-inline">
-                      <div class="form-group">
-                          <label class="sr-only" for="inputName">Name</label>
-                          <input type="text" class="form-control" id="inputName" placeholder="Customer Name" ng-model="custName">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputPassword">Password</label>
-                          <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="custPass">
-                      </div>
-                      <button type="submit" class="btn btn-default" ng-click="submitCreateCustomer()">Create</button>
-                  </form>
-                  <div id="formInfo">{{ results.createCustomer }}</div>
-              </div>
-              <div ng-show="pages.removeCustomer">
-                  Remove Customer
-                  <form class="form-inline">
-                      <div class="form-group">
-                          <label class="sr-only" for="inputName">Name</label>
-                          <input type="text" class="form-control" id="inputName" placeholder="Customer Name" ng-model="custName">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputPassword">Password</label>
-                          <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="custPass">
-                      </div>
-                      <button type="submit" class="btn btn-default" ng-click="submitRemoveCustomer()">Remove</button>
-                  </form>
-                  <div id="formInfo">{{ results.removeCustomer }}</div>
-              </div>
-              <div ng-show="pages.updateCustomer">
-                  Update Customer
-                  <form class="form-inline">
-                      <div class="form-group">
-                          <label class="sr-only" for="inputName">Name</label>
-                          <input type="text" class="form-control" id="inputName" placeholder="Customer Name" ng-model="custUName">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputPassword">Password</label>
-                          <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="custUPass">
-                      </div>
-                      <button type="submit" class="btn btn-default" ng-click="submitUpdateCustomer()">Update</button>
-                  </form>
-                  <div id="formInfo">{{ results.updateCustomer }}</div>
-              </div>
-              <div ng-show="pages.getCustomerById">
-                  Get Customer By Id
-                  <form class="form-inline">
-                      <div class="form-group">
-                          <label class="sr-only" for="inputId">Name</label>
-                          <input type="text" class="form-control" id="inputId" placeholder="Customer ID" ng-model="cId">
-                      </div>
-                      <button type="submit" class="btn btn-default" ng-click="submitGetCustomerById()">Get Customer</button>
-                  </form>
-                  <div id="result">
-                      <div id="formInfo" ng-show="results.getCustomerById['id'] == null">{{ results.getCustomerById }}</div>
-                      <table class="table" ng-show="results.getCustomerById['id'] != null">
-                          <thead>
-                              <tr>
-                                  <th>Id</th>
-                                  <th>Name</th>
-                                  <th>Password</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <tr>
-                                  <td>{{ results.getCustomerById['id'] }}</td>
-                                  <td>{{ results.getCustomerById['name'] }}</td>
-                                  <td>{{ results.getCustomerById['pass'] }}</td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-              <div ng-show="pages.getCustomerByName">
-                  Get Customer By Name
-                  <form class="form-inline">
-                      <div class="form-group">
-                          <label class="sr-only" for="inputName">Name</label>
-                          <input type="text" class="form-control" id="inputName" placeholder="Customer Name" ng-model="cName">
-                      </div>
-                      <button type="submit" class="btn btn-default" ng-click="submitGetCustomerByName()">Get Customer</button>
-                  </form>
-                  <div id="result">
-                      <div id="formInfo" ng-show="results.getCustomerByName['id'] == null">{{ results.getCustomerByName }}</div>
-                      <table class="table" ng-show="results.getCustomerByName['id'] != null">
-                          <thead>
-                              <tr>
-                                  <th>Id</th>
-                                  <th>Name</th>
-                                  <th>Password</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <tr>
-                                  <td>{{ results.getCustomerByName['id'] }}</td>
-                                  <td>{{ results.getCustomerByName['name'] }}</td>
-                                  <td>{{ results.getCustomerByName['pass'] }}</td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-              <div ng-show="pages.getAllCustomers">
-                  <div class="panel panel-default">
-                      <div class="panel-heading">Customers present in the system</div>
-                      <table class="table">
-                          <thead>
-                              <tr>
-                                  <th>Id</th>
-                                  <th>Name</th>
-                                  <th>Password</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <tr ng-repeat="customer in customers">
-                                  <td>{{ customer.id }}</td>
-                                  <td>{{ customer.name }}</td>
-                                  <td>{{ customer.pass }}</td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-          </div>
-          <!-- admin page ends -->
+                <div id="formInfo">{{ failure }}</div>
+            </div>
+            <!-- admin page -->
+            <div ng-controller="adminPage" ng-hide="whoIsLoggedIn!='admin'">
+                <div ng-show="pages.createCompany">
+                    Create Company
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputName">Name</label>
+                            <input type="text" class="form-control" id="inputName" placeholder="Company Name" ng-model="name">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputPassword">Password</label>
+                            <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="pass">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputEmail">Password</label>
+                            <input type="text" class="form-control" id="inputEmail" placeholder="example@email.com" ng-model="email">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="submitCreateCompany()">Create</button>
+                    </form>
+                    <div id="formInfo">{{ results.createCompany }}</div>
+                </div>
+                <div ng-show="pages.removeCompany">
+                    Remove Company
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputName">Name</label>
+                            <input type="text" class="form-control" id="inputName" placeholder="Company Name" ng-model="rName">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputPassword">Password</label>
+                            <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="rPass">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputEmail">Password</label>
+                            <input type="text" class="form-control" id="inputEmail" placeholder="example@email.com" ng-model="rEmail">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="submitRemoveCompany()">Remove</button>
+                    </form>
+                    <div id="formInfo">{{ results.removeCompany }}</div>
+                </div>
+                <div ng-show="pages.updateCompany">
+                    Update Company
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputName">Name</label>
+                            <input type="text" class="form-control" id="inputName" placeholder="Company Name" ng-model="uName">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputPassword">Password</label>
+                            <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="uPass">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputEmail">Password</label>
+                            <input type="text" class="form-control" id="inputEmail" placeholder="example@email.com" ng-model="uEmail">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="submitUpdateCompany()">Update</button>
+                    </form>
+                    <div id="formInfo">{{ results.updateCompany }}</div>
+                </div>
+                <div ng-show="pages.getCompanyById">
+                    Get Company By Id
+                    <form class="form-inline">
+                        <select class="form-control" ng-model="selectedId">
+                            <option ng-repeat="id in compIds">{{ id }}</option>
+                        </select>
+                        <button type="submit" class="btn btn-default" ng-click="submitGetCompanyById()">Get Company</button>
+                    </form>
+                    <div id="result">
+                        <div id="formInfo" ng-show="results.getCompanyById['id'] == null">{{ results.getCompanyById }}</div>
+                        <table class="table" ng-show="results.getCompanyById['id'] != null">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Password</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ results.getCompanyById['id'] }}</td>
+                                    <td>{{ results.getCompanyById['name'] }}</td>
+                                    <td>{{ results.getCompanyById['pass'] }}</td>
+                                    <td>{{ results.getCompanyById['email'] }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div ng-show="pages.getCompanyByName">
+                    Get Company By Name
+                    <form class="form-inline">
+                        <select class="form-control" ng-model="selectedName" placeholder="Company Name">
+                            <option ng-repeat="name in compNames">{{ name }}</option>
+                        </select>
+                        <button type="submit" class="btn btn-default" ng-click="submitGetCompanyByName()">Get Company</button>
+                    </form>
+                    <div id="result">
+                        <div id="formInfo" ng-show="results.getCompanyByName['id'] == null">{{ results.getCompanyByName }}</div>
+                        <table class="table" ng-show="results.getCompanyByName['id'] != null">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Password</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ results.getCompanyByName['id'] }}</td>
+                                    <td>{{ results.getCompanyByName['name'] }}</td>
+                                    <td>{{ results.getCompanyByName['pass'] }}</td>
+                                    <td>{{ results.getCompanyByName['email'] }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div ng-show="pages.getAllCompanies">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Companies present in the system</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Password</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="company in companies">
+                                    <td>{{ company.id }}</td>
+                                    <td>{{ company.name }}</td>
+                                    <td>{{ company.pass }}</td>
+                                    <td>{{ company.email }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div ng-show="pages.createCustomer">
+                    Create Customer
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputName">Name</label>
+                            <input type="text" class="form-control" id="inputName" placeholder="Customer Name" ng-model="custName">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputPassword">Password</label>
+                            <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="custPass">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="submitCreateCustomer()">Create</button>
+                    </form>
+                    <div id="formInfo">{{ results.createCustomer }}</div>
+                </div>
+                <div ng-show="pages.removeCustomer">
+                    Remove Customer
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputName">Name</label>
+                            <input type="text" class="form-control" id="inputName" placeholder="Customer Name" ng-model="custName">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputPassword">Password</label>
+                            <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="custPass">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="submitRemoveCustomer()">Remove</button>
+                    </form>
+                    <div id="formInfo">{{ results.removeCustomer }}</div>
+                </div>
+                <div ng-show="pages.updateCustomer">
+                    Update Customer
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputName">Name</label>
+                            <input type="text" class="form-control" id="inputName" placeholder="Customer Name" ng-model="custUName">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputPassword">Password</label>
+                            <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="custUPass">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="submitUpdateCustomer()">Update</button>
+                    </form>
+                    <div id="formInfo">{{ results.updateCustomer }}</div>
+                </div>
+                <div ng-show="pages.getCustomerById">
+                    Get Customer By Id
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputId">Name</label>
+                            <input type="text" class="form-control" id="inputId" placeholder="Customer ID" ng-model="cId">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="submitGetCustomerById()">Get Customer</button>
+                    </form>
+                    <div id="result">
+                        <div id="formInfo" ng-show="results.getCustomerById['id'] == null">{{ results.getCustomerById }}</div>
+                        <table class="table" ng-show="results.getCustomerById['id'] != null">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Password</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ results.getCustomerById['id'] }}</td>
+                                    <td>{{ results.getCustomerById['name'] }}</td>
+                                    <td>{{ results.getCustomerById['pass'] }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div ng-show="pages.getCustomerByName">
+                    Get Customer By Name
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputName">Name</label>
+                            <input type="text" class="form-control" id="inputName" placeholder="Customer Name" ng-model="cName">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="submitGetCustomerByName()">Get Customer</button>
+                    </form>
+                    <div id="result">
+                        <div id="formInfo" ng-show="results.getCustomerByName['id'] == null">{{ results.getCustomerByName }}</div>
+                        <table class="table" ng-show="results.getCustomerByName['id'] != null">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Password</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ results.getCustomerByName['id'] }}</td>
+                                    <td>{{ results.getCustomerByName['name'] }}</td>
+                                    <td>{{ results.getCustomerByName['pass'] }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div ng-show="pages.getAllCustomers">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Customers present in the system</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Password</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="customer in customers">
+                                    <td>{{ customer.id }}</td>
+                                    <td>{{ customer.name }}</td>
+                                    <td>{{ customer.pass }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- admin page ends -->
+            <!-- customer page starts -->
+            <div ng-controller="customerPage" ng-hide="whoIsLoggedIn!='customer'">
 
-          <!-- customer page starts -->
-          <div ng-controller="customerPage" ng-hide="whoIsLoggedIn!='customer'">
+            </div>
+            <!-- customer page ends -->
+            <!-- company page starts -->
+            <div ng-controller="companyPage" ng-hide="whoIsLoggedIn!='company'">
+                <div ng-show="pages.createCoupon">
+                    <h2>Create coupon</h2>
+                    <br />
+
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">Title</label>
+                            <br />
+                            <p>Title</p>
+                            <input type="text" class="form-control" ng-model="title">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">Title</label>
+                            <br />
+                            <p>amount</p>
+                            <input type="number" min="1" max="1000" class="form-control" ng-model="amount">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">Title</label>
+                            <br />
+                            <p>type</p>
+                            <select class="form-control" ng-model="type">
+                                <option ng-name="RESTAURANTS">RESTAURANTS</option>
+                                <option ng-name="ELECTRICITY">ELECTRICITY</option>
+                                <option ng-name="FOOD">FOOD</option>
+                                <option ng-name="HEALTH">HEALTH</option>
+                                <option ng-name="SPORTS">SPORTS</option>
+                                <option ng-name="CAMPING">CAMPING</option>
+                                <option ng-name="TRAVELLING">TRAVELLING</option>
+                                <option ng-name="CLOTHES">CLOTHES</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">price</label>
+                            <br />
+                            <p>price</p>
+                            <input type="number" min="1" max="1000" class="form-control" ng-model="price">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">image</label>
+                            <br />
+                            <p>image</p>
+                            <label class="radio-inline" ng-click="choice='URL'">
+                                <input type="radio" name="inlineRadioOptions" id="url" value="url"> URL
+                            </label>
+                            <label class="radio-inline" ng-click="choice='Upload'">
+                                <input type="radio" name="inlineRadioOptions" id="upload" value="upload"> Upload Image
+                            </label>
+                            <input type="file" class="form-control" ng-model="image">
+                        </div>
+                        <br />
+
+                        <div class="form-group">
+                            <label class="sr-only" for="startDate">start date</label>
+                            <br />
+                            <p>start date</p>
+                            <input type="date" class="form-control" ng-model="startDate">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="endDate">end date</label>
+                            <br />
+                            <p>end date</p>
+                            <input type="date" class="form-control" ng-model="endDate">
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">message</label>
+                            <br />
+                            <p>message</p>
+                            <textarea class="form-control" ng-model="message"></textarea>
+                        </div>
+                        <br />
+                        <br />
+                        <br />
+                        <button type="submit" class="btn btn-default" ng-click="submitCreateCoupon()">Create</button>
+                    </form>
+                    <div id="formInfo">{{ result }}</div>
+                </div>
+
+                <div ng-show="pages.getCoupons">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">All coupons</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Title</th>
+                                    <th>Start Date</th>
+                                    <th>And Date</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Message</th>
+                                    <th>Price</th>
+                                    <th>Image</th>
+                                    <th>Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="coupon in companyCoupons">
+                                    <td>{{ coupon.id }}</td>
+                                    <td>{{ coupon.title }}</td>
+                                    <td> <input type="date" placeholder="{{ coupon.startDate | date:"dd/MM/yyyy" }}" class="form-control" ng-model="startDate" ></td>
+                                    <td>{{ coupon.endDate | date:"dd/MM/yyyy" }}</td>
+                                    <td>{{ coupon.amount }}</td>
+                                    <td>{{ coupon.type }}</td>
+                                    <td>{{ coupon.message }}</td>
+                                    <td> <input type="number" placeholder="{{ coupon.price | currency}}" min="1" max="1000" class="form-control" ng-model="price"></td>
+                                    <td>{{ coupon.image }}</td>
+                                    <td>
+                                        <button ng-click="removeCoupon(coupon)">remove</button>
+                                        <button ng-click="updateCoupon(coupon)">update</button>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+
            
-          </div>
-          <!-- customer page ends -->
+            <!-- company page ends -->
 
-          <!-- company page starts -->
-          <div ng-controller="companyPage" ng-hide="whoIsLoggedIn!='company'">
-              <div ng-show="pages.createCoupon">
-                 <h2>Create coupon</h2> 
-                  <br />
-             
-                  <form class="form-inline">
-                      <div class="form-group">
-                          <label class="sr-only" for="inputTitle">Title</label>
-                          <br />
-                          <p>Title</p>
-                          <input type="text" class="form-control" ng-model="title">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputTitle">Title</label>
-                          <br />
-                          <p>amount</p>
-                          <input type="number" min="1" max="1000" class="form-control" ng-model="amount">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputTitle">Title</label>
-                          <br />
-                          <p>type</p>
-                          <select class="form-control" ng-model="type">
-                              <option ng-name="RESTAURANTS">Restaurants</option>
-                              <option ng-name="ELECTRICITY">Electricity</option>
-                              <option ng-name="FOOD">Food</option>
-                              <option ng-name="HEALTH">Health</option>
-                              <option ng-name="SPORTS">Sports</option>
-                              <option ng-name="CAMPING">Camping</option>
-                              <option ng-name="TRAVELLING">Travelling</option>
-                              <option ng-name="CLOTHES">Clothes</option>
-                          </select>
-                      </div>
-                      <br />
-                      <div class="form-group">
-                          <label class="sr-only" for="inputTitle">price</label>
-                          <br />
-                          <p>price</p>
-                          <input type="number" min="1" max="1000" class="form-control" ng-model="price">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="inputTitle">image</label>
-                          <br />
-                          <p>image</p>
-                          <label class="radio-inline" ng-click="choice='URL'">
-                              <input type="radio" name="inlineRadioOptions" id="url" value="url"> URL
-                          </label>
-                          <label class="radio-inline" ng-click="choice='Upload'">
-                              <input type="radio" name="inlineRadioOptions" id="upload" value="upload"> Upload Image
-                          </label>
-                          <input type="file" class="form-control" ng-model="image">
-                      </div>
-                      <br />
-
-                      <div class="form-group">
-                          <label class="sr-only" for="startDate">start date</label>
-                          <br />
-                          <p>start date</p>
-                          <input type="date" class="form-control" ng-model="startDate">
-                      </div>
-                      <div class="form-group">
-                          <label class="sr-only" for="endDate">end date</label>
-                          <br />
-                          <p>end date</p>
-                          <input type="date" class="form-control" ng-model="endDate">
-                      </div>
-                      <br />
-                      <div class="form-group">
-                          <label class="sr-only" for="inputTitle">message</label>
-                          <br />
-                          <p>message</p>
-                          <textarea class="form-control" ng-model="message"></textarea>
-                      </div>
-                      <br />
-                      <br />
-                      <br />
-                      <button type="submit" class="btn btn-default" ng-click="submitCreateCoupon()">Create</button>
-                  </form>
-                  <div id="formInfo">{{ result }}</div>
-              </div>
-          </div>
-          <!-- company page ends -->
-        
-    </div>
+        </div>
     </div>
     <div id="footer">
         &copy; This site was created by Meir Veixelbaum & Maxim Golman.

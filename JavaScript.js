@@ -115,7 +115,9 @@ var clientModule = angular.module('client', [])
 			    "getCustomerById": false,
 			    "getCustomerByName": false,
 			    "getAllCustomers": false,
-			    "createCoupon" : false
+			    "createCoupon": false,
+			    "getCoupons": false,
+			    "updateCoupon": false
 			};
 
 		    // function that closes all admins pages
@@ -153,7 +155,9 @@ var clientModule = angular.module('client', [])
 			    "getCustomerById": null,
 			    "getCustomerByName": null,
 			    "getAllCustomers": null,
-			    "createCoupon": null
+			    "createCoupon": null,
+			    "getCoupons": null,
+			    "updateCoupon": null
 			}
 
 		    // function that nullifies all results
@@ -641,27 +645,26 @@ var clientModule = angular.module('client', [])
 		   
 		})
 		
-		.controller('companyPage', function ($rootScope, $scope, $http) {
-
+		.controller('companyPage', function ($rootScope, $scope, $http, $timeout) {
+             
 		    // create coupon
 		    $scope.submitCreateCoupon = function () {
 
 	//	        if ($scope.title != null && $scope.amount != null && $scope.type != null
       //              && $scope.price != null && $scope.image != null && $scope.startDate != null
        //             && $scope.endDate != null && $scope.message != null) {
-		        var startDate = new Date($scope.startDate);
-		        var startDate = new Date($scope.endDate);
+
 		            $http({
 		                method: 'POST',
 		                url: $rootScope.localHost + $rootScope.projectPath + 'company',
 		                data: {
 		                    "title": $scope.title,
-		                    "amount": $scope.amount.data,
+		                    "amount": $scope.amount,
 		                    "type": $scope.type,
 		                    "price": $scope.price,
 		                    "image": "image",
-		                    "startDate": startDate,
-		                    "endDate": endDate,
+		                    "startDate": $scope.startDate,
+		                    "endDate": $scope.endDate,
 		                    "message": $scope.message
 		                }
 		            })
@@ -687,6 +690,99 @@ var clientModule = angular.module('client', [])
 
 		        $timeout(function () { $scope.result = null }, informationShowTimeInMillisec);
 		    }
+
+		  
+           
+		    $rootScope.submitGetCoupons = function () {
+   
+		            $http({
+		                method: 'GET',
+		                url: $rootScope.localHost + $rootScope.projectPath + 'company/coupons'
+		            })
+
+					.then(function successCallback(response) {
+
+					    $scope.loginResponse = response.data;
+                        
+					    $rootScope.companyCoupons = $scope.loginResponse['coupons'];
+					    
+
+					}, function errorCallback(response) {
+
+					    $scope.loginResponse = response.data;
+					    $scope.error = $scope.loginResponse['error'];
+
+					});
+
+		   
+		        
+		    }
+
+		    $scope.removeCoupon = function (coupon) {
+
+		        $http({
+		            method: 'DELETE',
+		            url: $rootScope.localHost + $rootScope.projectPath + 'company',
+		            headers: { 'Content-Type': 'application/json' },
+		            data: {
+		                "title": coupon.title,
+		                "amount": coupon.amount,
+		                "type": coupon.type,
+		                "price": coupon.price,
+		                "image": coupon.image,
+		                "startDate": coupon.startDate,
+		                "endDate": coupon.endDate,
+		                "message": coupon.message
+		            }
+		        })
+
+					.then(function successCallback(response) {
+					   
+					    $scope.loginResponse = response.data;
+					    $scope.result = $scope.loginResponse['success'];
+
+
+					}, function errorCallback(response) {
+
+					    $scope.loginResponse = response.data;
+					    $scope.error = $scope.loginResponse['error'];
+
+					});
+		    }
+
+		    $scope.updateCoupon = function (coupon) {
+              
+		        $http({
+		            method: 'PUT',
+		            url: $rootScope.localHost + $rootScope.projectPath + 'company',
+		            headers: { 'Content-Type': 'application/json' },
+		            data: {
+		                "title": coupon.title,
+		                "amount": coupon.amount,
+		                "type": coupon.type,
+		                "price": coupon.price,
+		                "image": coupon.image,
+		                "startDate": coupon.startDate,
+		                "endDate": coupon.endDate,
+		                "message": coupon.message
+		            }
+		        })
+
+					.then(function successCallback(response) {
+
+					    $scope.loginResponse = response.data;
+					    $scope.result = $scope.loginResponse['success'];
+
+
+					}, function errorCallback(response) {
+
+					    $scope.loginResponse = response.data;
+					    $scope.error = $scope.loginResponse['error'];
+
+					});
+		    }
+		
+
 		})
 		
 		
