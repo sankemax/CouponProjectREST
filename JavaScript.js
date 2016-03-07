@@ -1,4 +1,4 @@
-﻿var informationShowTimeInMillisec = 2000;
+﻿var informationShowTimeInMillisec = 1500;
 var clientModule = angular.module('client', [])
 		
         // page header
@@ -97,18 +97,11 @@ var clientModule = angular.module('client', [])
 		
         // menu
 		.controller('menu', function($rootScope, $scope, $http) {
-			
-			$scope.adminCompany = false;
-			$scope.adminCustomer = false;
-
+		
 		    // add all pages here
-			$rootScope.pages = {
+		    $rootScope.pages = {
 			    "createCompany": false,
-			    "removeCompany": false,
-			    "getCompanyById": false,
-			    "updateCompany": false,
 			    "getAllCompanies": false,
-			    "getCompanyByName": false,
 			    "createCustomer": false,
 			    "removeCustomer": false,
 			    "updateCustomer": false,
@@ -120,7 +113,7 @@ var clientModule = angular.module('client', [])
 			    "updateCoupon": false
 			};
 
-		    // function that closes all admins pages
+		    // function that closes all pages
 			$rootScope.closeAllPages = function () {
 
 			    angular.forEach($rootScope.pages, function (value, key) {
@@ -145,10 +138,8 @@ var clientModule = angular.module('client', [])
 			$rootScope.results = {
 			    "createCompany": null,
 			    "removeCompany": null,
-			    "getCompanyById": null,
 			    "updateCompany": null,
 			    "getAllCompanies": null,
-			    "getCompanyByName": null,
 			    "createCustomer": null,
 			    "removeCustomer": null,
 			    "updateCustomer": null,
@@ -238,15 +229,12 @@ var clientModule = angular.module('client', [])
 
 		    // remove company
 
-		    $scope.submitRemoveCompany = function () {
-
-		        if ($scope.rName != null && $scope.rPass != null && $scope.rEmail != null) {
-
+		    $scope.submitRemoveCompany = function (company) {
 		            $http({
 		                method: "DELETE",
 		                url: $rootScope.localHost + $rootScope.projectPath + 'admin/removecomp',
 		                headers: { 'Content-Type': 'application/json' },
-		                data: { "name": $scope.rName, "pass": $scope.rPass, "email": $scope.rEmail }
+		                data: { "name": company.name, "pass": company.pass, "email": company.email }
 		               })
 
 					.then(function successCallback(response) {
@@ -254,63 +242,72 @@ var clientModule = angular.module('client', [])
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["removeCompany"] = $scope.loginResponse['success'];
 					    $scope.toRefreshCompanies = true;
+					    $scope.deletedCompany();
+					    $scope.submitGetAllCompanies();
+					    $scope.compNullify('all');
 
 					}, function errorCallback(response) {
 
+					    // TODO write something relevant. there are no results anymore
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["removeCompany"] = $scope.loginResponse['error'];
 
 
 					});
 
-		        } else {
-		            $rootScope.results["removeCompany"] = "Fill in the form";
-		        }
-		        $timeout(function () { $rootScope.results["removeCompany"] = null }, informationShowTimeInMillisec);
-                $scope.rName = null;
-				$scope.rPass = null;
-				$scope.rEmail = null;
+		    }
+
+		    $scope.deletedCompany = function () {
+
+		        $scope.showDeletedComp = true;
+		        $timeout(function () { $scope.showDeletedComp = false }, 3500);
 
 		    }
 
 		    // update company
 
-		    $scope.submitUpdateCompany = function () {
-
-		        if ($scope.uName != null && $scope.uPass != null && $scope.uEmail != null) {
+		    $scope.submitUpdateCompany = function (company) {
+		        if (company.pass != null && company.email != null) {
 
 		            $http({
 		                method: "PUT",
 		                url: $rootScope.localHost + $rootScope.projectPath + 'admin/updcomp',
 		                headers: { 'Content-Type': 'application/json' },
-		                data: { "name": $scope.uName, "pass": $scope.uPass, "email": $scope.uEmail }
+		                data: { "name": company.name, "pass": company.pass, "email": company.email }
 		            })
 
 					.then(function successCallback(response) {
 
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["updateCompany"] = $scope.loginResponse['success'];
-					    $scope.toRefreshCompanies = true;
+					    $scope.updatedCompany();
 
 					}, function errorCallback(response) {
 
+                        // TODO write something relevant
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["updateCompany"] = $scope.loginResponse['error'];
-
-
+                        
 					});
 
 		        } else {
+                    // TODO write something relevant. there are no results anymore
 		            $rootScope.results["updateCompany"] = "Fill in the form";
 		        }
-		        $timeout(function () { $rootScope.results["updateCompany"] = null }, informationShowTimeInMillisec);
-                $scope.uName = null;
-				$scope.uPass = null;
-				$scope.uEmail = null;
 
+				$compShowUpdate = false;
+				$scope.toRefreshCompanies = true;
+				$scope.submitGetAllCompanies();
+				$scope.compNullify('all');
+
+				$scope.updatedCompany = function () {
+
+				    $scope.showUpdatedComp = true;
+				    $timeout(function () { $scope.showUpdatedComp = false }, 3500);
+				}
 		    }
 
-		    // get company by id
+		    // get company by id ------- currently not used -------
 		    $scope.submitGetCompanyById = function () {
 
 		        if ($scope.selectedId != null) {
@@ -343,7 +340,7 @@ var clientModule = angular.module('client', [])
 		        $scope.selectedId = null;
 		    }
 
-		    // get company by name
+		    // get company by name ------- currently not used -------
 		    $scope.submitGetCompanyByName = function () {
 
 		        if ($scope.selectedName != null) {
@@ -376,17 +373,33 @@ var clientModule = angular.module('client', [])
 
 		    }
 
+		    // company options
+		    $scope.companyOrderColumn = 'id';
+
+		    $scope.compNullify = function (nullify) {
+		        if (angular.equals('id', nullify) || angular.equals('all', nullify)) $scope.compIdSelect = '';
+		        if (angular.equals('name', nullify) || angular.equals('all', nullify)) $scope.compNameSelect = '';
+		    };
+
+		    $scope.compNullify('all');
+
+		    $scope.compSelect = function (company) {
+		        if ($scope.compIdSelect == company.id) return true;
+		        else if ($scope.compNameSelect == company.name) return true;
+		        else if ($scope.compIdSelect == '' && $scope.compNameSelect == '') return true;
+		        else return false;
+		    };
+
 		    // get all companies
-
-		    $scope.toRefreshCompanies = true;
-		    var companyIds = [];
-		    var companyNames = [];
-		    $scope.compIds = companyIds;
-		    $scope.compNames = companyNames;
-
 		    $rootScope.submitGetAllCompanies = function () {
 
 		        if ($scope.toRefreshCompanies) {
+
+		            var companyIds = [];
+		            var companyNames = [];
+
+		            $scope.compIds = companyIds;
+		            $scope.compNames = companyNames;
 
 		            $http({
 		                method: 'GET',
@@ -780,36 +793,6 @@ var clientModule = angular.module('client', [])
 					    $scope.error = $scope.loginResponse['error'];
 
 					});
-		    }
-
-		    $scope.searchByPrice = function (item) {
-		        if ($scope.searchPrice == undefined) {
-		            return true;
-		        }
-		        else {
-		            if ($scope.searchPrice <= item.price) {
-
-		                return true;
-		            }
-		            return false;
-		        }
-
-		    }
-
-	    $scope.searchByAndDate = function (item) {
-		        if ($scope.searchAndDate == undefined) {
-		            return true;
-		        }
-		        else {
-		            var date1 = new Date($scope.searchAndDate).getTime();
-		            var date2 = new Date(item.endDate).getTime();
-		            if (date1 <= date2) {
-
-		                return true;
-		            }
-		            return false;
-		        }
-
 		    }
 		
 

@@ -28,19 +28,15 @@
                 <!-- admin menu -->
                 <div ng-controller="adminMenu" id="adminMenu" ng-hide="whoIsLoggedIn!='admin'">
                     <div class="list-group">
-                        <button type="button" class="list-group-item" ng-click="adminCompany = ! adminCompany">Company Options</button>
-                        <div ng-show="adminCompany">
+                        <button type="button" class="list-group-item">Company Options</button>
+                        <div>
                             <ul class="nav nav-pills nav-stacked">
                                 <li ng-click="openPage('createCompany')"><a href="">Create Company</a></li>
-                                <li ng-click="openPage('removeCompany')"><a href="">Remove Company</a></li>
-                                <li ng-click="openPage('updateCompany')"><a href="">Update Company</a></li>
-                                <li ng-click="openPage('getCompanyById');submitGetAllCompanies()"><a href="">Get Company by Id</a></li>
-                                <li ng-click="openPage('getCompanyByName');submitGetAllCompanies()"><a href="">Get Company by Name</a></li>
-                                <li ng-click="openPage('getAllCompanies');submitGetAllCompanies()"><a href="">Get all Companies</a></li>
+                                <li ng-click="openPage('getAllCompanies');submitGetAllCompanies()"><a href="">Company Options</a></li>
                             </ul>
                         </div>
-                        <button type="button" class="list-group-item" ng-click="adminCustomer = ! adminCustomer">Customer Options</button>
-                        <div ng-show="adminCustomer">
+                        <button type="button" class="list-group-item">Customer Options</button>
+                        <div>
                             <ul class="nav nav-pills nav-stacked">
                                 <li ng-click="openPage('createCustomer')"><a href="">Create Customer</a></li>
                                 <li ng-click="openPage('removeCustomer')"><a href="">Remove Customer</a></li>
@@ -57,7 +53,14 @@
                 <div ng-controller="companyMenu" id="company-menu" ng-hide="whoIsLoggedIn!='company'">
                     <ul class="nav nav-pills nav-stacked">
                         <li ng-click="openPage('createCoupon')"> <a href="">Create coupon</a></li>
-                        <li ng-click="openPage('getCoupons');submitGetCoupons()"><a href="">Coupons</a></li>
+                        <li> <a href="">remove coupon</a></li>
+                        <li> <a href="">update coupon</a></li>
+                        <li> <a href="">get coupon</a></li>
+                        <li ng-click="openPage('getCoupons');submitGetCoupons()"><a href="">Get All Coupons</a></li>
+                        <li> <a href="">get coupon by type</a></li>
+                        <li> <a href="">get coupon by date</a></li>
+                        <li> <a href="">get coupon by price</a></li>
+                        <li> <a href="">get coupon by title</a></li>
 
                     </ul>
             </div>
@@ -104,25 +107,6 @@
                     </form>
                     <div id="formInfo">{{ results.createCompany }}</div>
                 </div>
-                <div ng-show="pages.removeCompany">
-                    Remove Company
-                    <form class="form-inline">
-                        <div class="form-group">
-                            <label class="sr-only" for="inputName">Name</label>
-                            <input type="text" class="form-control" id="inputName" placeholder="Company Name" ng-model="rName">
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="inputPassword">Password</label>
-                            <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="rPass">
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="inputEmail">Password</label>
-                            <input type="text" class="form-control" id="inputEmail" placeholder="example@email.com" ng-model="rEmail">
-                        </div>
-                        <button type="submit" class="btn btn-default" ng-click="submitRemoveCompany()">Remove</button>
-                    </form>
-                    <div id="formInfo">{{ results.removeCompany }}</div>
-                </div>
                 <div ng-show="pages.updateCompany">
                     Update Company
                     <form class="form-inline">
@@ -142,84 +126,48 @@
                     </form>
                     <div id="formInfo">{{ results.updateCompany }}</div>
                 </div>
-                <div ng-show="pages.getCompanyById">
-                    Get Company By Id
-                    <form class="form-inline">
-                        <select class="form-control" ng-model="selectedId">
-                            <option ng-repeat="id in compIds">{{ id }}</option>
-                        </select>
-                        <button type="submit" class="btn btn-default" ng-click="submitGetCompanyById()">Get Company</button>
-                    </form>
-                    <div id="result">
-                        <div id="formInfo" ng-show="results.getCompanyById['id'] == null">{{ results.getCompanyById }}</div>
-                        <table class="table" ng-show="results.getCompanyById['id'] != null">
-                            <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Name</th>
-                                    <th>Password</th>
-                                    <th>Email</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{{ results.getCompanyById['id'] }}</td>
-                                    <td>{{ results.getCompanyById['name'] }}</td>
-                                    <td>{{ results.getCompanyById['pass'] }}</td>
-                                    <td>{{ results.getCompanyById['email'] }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div ng-show="pages.getCompanyByName">
-                    Get Company By Name
-                    <form class="form-inline">
-                        <select class="form-control" ng-model="selectedName" placeholder="Company Name">
-                            <option ng-repeat="name in compNames">{{ name }}</option>
-                        </select>
-                        <button type="submit" class="btn btn-default" ng-click="submitGetCompanyByName()">Get Company</button>
-                    </form>
-                    <div id="result">
-                        <div id="formInfo" ng-show="results.getCompanyByName['id'] == null">{{ results.getCompanyByName }}</div>
-                        <table class="table" ng-show="results.getCompanyByName['id'] != null">
-                            <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Name</th>
-                                    <th>Password</th>
-                                    <th>Email</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{{ results.getCompanyByName['id'] }}</td>
-                                    <td>{{ results.getCompanyByName['name'] }}</td>
-                                    <td>{{ results.getCompanyByName['pass'] }}</td>
-                                    <td>{{ results.getCompanyByName['email'] }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
                 <div ng-show="pages.getAllCompanies">
+                    <div id="company-options">
+                        <form class="form-inline">
+                            Get Company By Id:
+                            <select class="form-control" ng-model="compIdSelect" ng-click="compNullify('name')">
+                                <option ng-repeat="id in compIds">{{ id }}</option>
+                            </select>
+                            Get Company By Name
+                            <select class="form-control" ng-model="compNameSelect" ng-click="compNullify('id')">
+                                <option ng-repeat="name in compNames">{{ name }}</option>
+                            </select>
+                            <button type="button" class="btn btn-default" ng-click="compNullify('all')">Clear Filter</button>
+                        </form>
+                    </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">Companies present in the system</div>
-                        <table class="table">
+                        <div class="alert alert-info" role="alert" ng-show="showDeletedComp">Company Deleted! This change can not be undone.</div>
+                        <div class="alert alert-success" role="alert" ng-show="showUpdatedComp">Company Updated! This change can not be undone.</div>
+                        <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Id</th>
-                                    <th>Name</th>
-                                    <th>Password</th>
-                                    <th>Email</th>
+                                    <th class="order-by" ng-click="companyOrderColumn = 'id'">Id</th>
+                                    <th class="order-by" ng-click="companyOrderColumn = 'name'">Name</th>
+                                    <th class="order-by" ng-click="companyOrderColumn = 'pass'">Password</th>
+                                    <th class="order-by" ng-click="companyOrderColumn = 'email'">Email</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="company in companies">
+                                <tr ng-repeat="company in companies | orderBy:companyOrderColumn | filter:compSelect">
                                     <td>{{ company.id }}</td>
                                     <td>{{ company.name }}</td>
-                                    <td>{{ company.pass }}</td>
-                                    <td>{{ company.email }}</td>
+                                    <td ng-click="compShowUpdate = true" ng-hide="compShowUpdate" ng-init="compOldPass = company.pass">{{ company.pass }}</td>
+                                    <td ng-show="compShowUpdate">
+                                        <input type="text" class="form-control" id="password" ng-model="company.pass">
+                                    </td>
+                                    <td ng-click="compShowUpdate = true" ng-hide="compShowUpdate" ng-init="compOldEmail = company.email">{{ company.email }}</td>
+                                    <td ng-show="compShowUpdate">
+                                        <input type="text" class="form-control" id="email" ng-model="company.email">
+                                    </td>
+                                    <td><button type="button" class="btn btn-default" ng-click="submitUpdateCompany(company)">Update</button></td>
+                                    <td><button type="button" class="btn btn-default" ng-click="compShowUpdate = false;company.pass = compOldPass;company.email = compOldEmail" ng-show="compShowUpdate">Cancel Update</button></td>
+                                    <td ng-hide="compShowUpdate"><button type="button" class="btn btn-default" ng-click="submitRemoveCompany(company)">Remove</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -439,50 +387,6 @@
                 </div>
 
                 <div ng-show="pages.getCoupons">
-                    <form class="form-inline">
-                        <div class="form-group">
-                            <label class="sr-only" for="inputTitle">id</label>
-                            <br />
-                            <p>Search id</p>
-                            <input class="form-control" type="text" ng-model="search.id" placeholder="Search id" />
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="inputTitle">title</label>
-                            <br />
-                            <p>Search title</p>
-                            <input class="form-control" type="text" ng-model="search.title" />
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="inputTitle">searchAndDate</label>
-                            <br />
-                            <p>Search and date</p>
-                            <input class="form-control" type="date" ng-model="searchAndDate" />
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="inputTitle">Title</label>
-                            <br />
-                            <p>Search type</p>
-                            <select class="form-control" ng-model="search.type">
-                                <option ng-name=""></option>
-                                <option ng-name="RESTAURANTS">RESTAURANTS</option>
-                                <option ng-name="ELECTRICITY">ELECTRICITY</option>
-                                <option ng-name="FOOD">FOOD</option>
-                                <option ng-name="HEALTH">HEALTH</option>
-                                <option ng-name="SPORTS">SPORTS</option>
-                                <option ng-name="CAMPING">CAMPING</option>
-                                <option ng-name="TRAVELLING">TRAVELLING</option>
-                                <option ng-name="CLOTHES">CLOTHES</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="inputTitle">searchPrice</label>
-                            <br />
-                            <p>Search Price</p>
-                            <input class="form-control" type="text" ng-model="searchPrice" />
-                        </div>
-                    </form>
-                    <br />
-                    <br />
                     <div class="panel panel-default">
                         <div class="panel-heading">All coupons</div>
                         <table class="table">
@@ -501,15 +405,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="coupon in companyCoupons | filter : search | filter :searchByPrice | filter :searchByAndDate">
+                                <tr ng-repeat="coupon in companyCoupons">
                                     <td>{{ coupon.id }}</td>
                                     <td>{{ coupon.title }}</td>
-                                    <td>{{ coupon.startDate | date : format}}</td>
-                                    <td>{{ coupon.endDate | date : format}}</td>
+                                    <td> <input type="date" placeholder="{{ coupon.startDate | date:"dd/MM/yyyy" }}" class="form-control" ng-model="startDate" ></td>
+                                    <td>{{ coupon.endDate | date:"dd/MM/yyyy" }}</td>
                                     <td>{{ coupon.amount }}</td>
                                     <td>{{ coupon.type }}</td>
                                     <td>{{ coupon.message }}</td>
-                                    <td> <input type="number" placeholder="{{ coupon.price | currency}}" class="form-control" ng-model="coupon.price"></td>
+                                    <td> <input type="number" placeholder="{{ coupon.price | currency}}" min="1" max="1000" class="form-control" ng-model="price"></td>
                                     <td>{{ coupon.image }}</td>
                                     <td>
                                         <button ng-click="removeCoupon(coupon)">remove</button>
