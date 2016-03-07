@@ -57,14 +57,7 @@
                 <div ng-controller="companyMenu" id="company-menu" ng-hide="whoIsLoggedIn!='company'">
                     <ul class="nav nav-pills nav-stacked">
                         <li ng-click="openPage('createCoupon')"> <a href="">Create coupon</a></li>
-                        <li> <a href="">remove coupon</a></li>
-                        <li> <a href="">update coupon</a></li>
-                        <li> <a href="">get coupon</a></li>
-                        <li ng-click="openPage('getCoupons');submitGetCoupons()"><a href="">Get All Coupons</a></li>
-                        <li> <a href="">get coupon by type</a></li>
-                        <li> <a href="">get coupon by date</a></li>
-                        <li> <a href="">get coupon by price</a></li>
-                        <li> <a href="">get coupon by title</a></li>
+                        <li ng-click="openPage('getCoupons');submitGetCoupons()"><a href="">Coupons</a></li>
 
                     </ul>
             </div>
@@ -446,6 +439,50 @@
                 </div>
 
                 <div ng-show="pages.getCoupons">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">id</label>
+                            <br />
+                            <p>Search id</p>
+                            <input class="form-control" type="text" ng-model="search.id" placeholder="Search id" />
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">title</label>
+                            <br />
+                            <p>Search title</p>
+                            <input class="form-control" type="text" ng-model="search.title" />
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">searchAndDate</label>
+                            <br />
+                            <p>Search and date</p>
+                            <input class="form-control" type="date" ng-model="searchAndDate" />
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">Title</label>
+                            <br />
+                            <p>Search type</p>
+                            <select class="form-control" ng-model="search.type">
+                                <option ng-name=""></option>
+                                <option ng-name="RESTAURANTS">RESTAURANTS</option>
+                                <option ng-name="ELECTRICITY">ELECTRICITY</option>
+                                <option ng-name="FOOD">FOOD</option>
+                                <option ng-name="HEALTH">HEALTH</option>
+                                <option ng-name="SPORTS">SPORTS</option>
+                                <option ng-name="CAMPING">CAMPING</option>
+                                <option ng-name="TRAVELLING">TRAVELLING</option>
+                                <option ng-name="CLOTHES">CLOTHES</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputTitle">searchPrice</label>
+                            <br />
+                            <p>Search Price</p>
+                            <input class="form-control" type="text" ng-model="searchPrice" />
+                        </div>
+                    </form>
+                    <br />
+                    <br />
                     <div class="panel panel-default">
                         <div class="panel-heading">All coupons</div>
                         <table class="table">
@@ -464,15 +501,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="coupon in companyCoupons">
+                                <tr ng-repeat="coupon in companyCoupons | filter : search | filter :searchByPrice | filter :searchByAndDate">
                                     <td>{{ coupon.id }}</td>
                                     <td>{{ coupon.title }}</td>
-                                    <td> <input type="date" placeholder="{{ coupon.startDate | date:"dd/MM/yyyy" }}" class="form-control" ng-model="startDate" ></td>
-                                    <td>{{ coupon.endDate | date:"dd/MM/yyyy" }}</td>
+                                    <td>{{ coupon.startDate | date : format}}</td>
+                                    <td>{{ coupon.endDate | date : format}}</td>
                                     <td>{{ coupon.amount }}</td>
                                     <td>{{ coupon.type }}</td>
                                     <td>{{ coupon.message }}</td>
-                                    <td> <input type="number" placeholder="{{ coupon.price | currency}}" min="1" max="1000" class="form-control" ng-model="price"></td>
+                                    <td> <input type="number" placeholder="{{ coupon.price | currency}}" class="form-control" ng-model="coupon.price"></td>
                                     <td>{{ coupon.image }}</td>
                                     <td>
                                         <button ng-click="removeCoupon(coupon)">remove</button>

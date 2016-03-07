@@ -781,6 +781,36 @@ var clientModule = angular.module('client', [])
 
 					});
 		    }
+
+		    $scope.searchByPrice = function (item) {
+		        if ($scope.searchPrice == undefined) {
+		            return true;
+		        }
+		        else {
+		            if ($scope.searchPrice <= item.price) {
+
+		                return true;
+		            }
+		            return false;
+		        }
+
+		    }
+
+	    $scope.searchByAndDate = function (item) {
+		        if ($scope.searchAndDate == undefined) {
+		            return true;
+		        }
+		        else {
+		            var date1 = new Date($scope.searchAndDate).getTime();
+		            var date2 = new Date(item.endDate).getTime();
+		            if (date1 <= date2) {
+
+		                return true;
+		            }
+		            return false;
+		        }
+
+		    }
 		
 
 		})
