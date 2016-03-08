@@ -46,7 +46,12 @@
                 </div>
                 <!-- admin menu ends -->
                 <!-- customer menu -->
-                <div ng-controller="customerMenu" id="customer-menu" ng-hide="whoIsLoggedIn!='customer'"><p>customer menu</p></div>
+                <div ng-controller="companyMenu" id="customer-menu" ng-hide="whoIsLoggedIn!='customer'">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li ng-click="openPage('couponsToPurchase');submitGetAvailableCoupons()"><a href="">Purchase Coupons</a></li>
+                        <li ng-click="openPage('purchacedCoupons');submitGetPurchacedCoupons()"><a href="">View Purchased Coupons</a></li>
+                    </ul>
+                </div>
                 <!-- customer menu ends -->
                 <!-- company menu -->
                 <div ng-controller="companyMenu" id="company-menu" ng-hide="whoIsLoggedIn!='company'">
@@ -207,7 +212,169 @@
             <!-- admin page ends -->
             <!-- customer page starts -->
             <div ng-controller="customerPage" ng-hide="whoIsLoggedIn!='customer'">
+                    <div ng-show="pages.couponsToPurchase">
+                        <h2>Purchase Coupons</h2>
+                        <br />
+                        <div class="alert alert-info" role="alert" ng-show="showBought">Coupon Bought!</div>
+                        <div class="alert alert-danger" role="alert" ng-show="showErrorBought">Error: {{ result }}</div>
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <label class="sr-only" for="inputTitle">id</label>
+                                <br />
+                                <p>Search id</p>
+                                <input class="form-control" type="text" ng-model="search.id" placeholder="Search id" />
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="inputTitle">title</label>
+                                <br />
+                                <p>Search title</p>
+                                <input class="form-control" type="text" ng-model="search.title" />
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="inputTitle">searchEndDate</label>
+                                <br />
+                                <p>Search End date</p>
+                                <input class="form-control" type="date" ng-model="searchAndDate" />
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="inputTitle">Title</label>
+                                <br />
+                                <p>Search type</p>
+                                <select class="form-control" ng-model="search.type">
+                                    <option ng-name=""></option>
+                                    <option ng-name="RESTAURANTS">RESTAURANTS</option>
+                                    <option ng-name="ELECTRICITY">ELECTRICITY</option>
+                                    <option ng-name="FOOD">FOOD</option>
+                                    <option ng-name="HEALTH">HEALTH</option>
+                                    <option ng-name="SPORTS">SPORTS</option>
+                                    <option ng-name="CAMPING">CAMPING</option>
+                                    <option ng-name="TRAVELLING">TRAVELLING</option>
+                                    <option ng-name="CLOTHES">CLOTHES</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="inputTitle">searchPrice</label>
+                                <br />
+                                <p>Search Price</p>
+                                <input class="form-control" type="text" ng-model="searchPrice" />
+                            </div>
+                        </form>
+                        <br />
+                        <br />
+                        <div class="panel panel-default">
+                            <div class="panel-heading">All coupons</div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Title</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Amount</th>
+                                        <th>Type</th>
+                                        <th>Message</th>
+                                        <th>Price</th>
+                                        <th>Image</th>
+                                        <th>Options</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="coupon in availableCoupons | filter : search | filter :searchByPrice | filter :searchByAndDate | filter: amountZero">
+                                        <td>{{ coupon.id }}</td>
+                                        <td>{{ coupon.title }}</td>
+                                        <td>{{ coupon.startDate | date : format}}</td>
+                                        <td>{{ coupon.endDate | date : format}}</td>
+                                        <td>{{ coupon.amount }}</td>
+                                        <td>{{ coupon.type }}</td>
+                                        <td>{{ coupon.message }}</td>
+                                        <td>{{ coupon.price | currency}}</td>
+                                        <td>{{ coupon.image }}</td>
+                                        <td>
+                                            <button ng-click="purchaseCoupon(coupon)">Purchase</button>
+                                        </td>
 
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div ng-show="pages.purchacedCoupons">
+                        <form class="form-inline">
+                            <h2>Purchased Coupons</h2>
+                            <br />
+                            <div class="form-group">
+                                <label class="sr-only" for="inputTitle">id</label>
+                                <br />
+                                <p>Search id</p>
+                                <input class="form-control" type="text" ng-model="search.id" placeholder="Search id" />
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="inputTitle">title</label>
+                                <br />
+                                <p>Search title</p>
+                                <input class="form-control" type="text" ng-model="search.title" />
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="inputTitle">searchAndDate</label>
+                                <br />
+                                <p>Search End date</p>
+                                <input class="form-control" type="date" ng-model="searchAndDate" />
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="inputTitle">Title</label>
+                                <br />
+                                <p>Search type</p>
+                                <select class="form-control" ng-model="search.type">
+                                    <option ng-name=""></option>
+                                    <option ng-name="RESTAURANTS">RESTAURANTS</option>
+                                    <option ng-name="ELECTRICITY">ELECTRICITY</option>
+                                    <option ng-name="FOOD">FOOD</option>
+                                    <option ng-name="HEALTH">HEALTH</option>
+                                    <option ng-name="SPORTS">SPORTS</option>
+                                    <option ng-name="CAMPING">CAMPING</option>
+                                    <option ng-name="TRAVELLING">TRAVELLING</option>
+                                    <option ng-name="CLOTHES">CLOTHES</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="inputTitle">searchPrice</label>
+                                <br />
+                                <p>Search Price</p>
+                                <input class="form-control" type="text" ng-model="searchPrice" />
+                            </div>
+                        </form>
+                        <br />
+                        <br />
+                        <div class="panel panel-default">
+                            <div class="panel-heading">All coupons</div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Title</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Type</th>
+                                        <th>Message</th>
+                                        <th>Price</th>
+                                        <th>Image</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="coupon in purchasedCoupons | filter : search | filter :searchByPrice | filter :searchByAndDate">
+                                        <td>{{ coupon.id }}</td>
+                                        <td>{{ coupon.title }}</td>
+                                        <td>{{ coupon.startDate | date : format}}</td>
+                                        <td>{{ coupon.endDate | date : format}}</td>
+                                        <td>{{ coupon.type }}</td>
+                                        <td>{{ coupon.message }}</td>
+                                        <td>{{ coupon.price | currency}}</td>
+                                        <td>{{ coupon.image }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
             </div>
             <!-- customer page ends -->
             <!-- company page starts -->
@@ -309,7 +476,7 @@
                             <div class="form-group">
                                 <label class="sr-only" for="inputTitle">searchAndDate</label>
                                 <br />
-                                <p>Search and date</p>
+                                <p>Search End date</p>
                                 <input class="form-control" type="date" ng-model="searchAndDate" />
                             </div>
                             <div class="form-group">
@@ -345,7 +512,7 @@
                                         <th>Id</th>
                                         <th>Title</th>
                                         <th>Start Date</th>
-                                        <th>And Date</th>
+                                        <th>End Date</th>
                                         <th>Amount</th>
                                         <th>Type</th>
                                         <th>Message</th>

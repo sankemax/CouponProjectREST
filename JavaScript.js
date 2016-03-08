@@ -47,6 +47,7 @@ var clientModule = angular.module('client', [])
 
 							$rootScope.toRefreshCompanies = true;
 							$rootScope.toRefreshCustomers = true;
+							$rootScope.toRefreshBoughtCoupons = true;
 							
 					}, function errorCallback(response) {
 						
@@ -106,6 +107,8 @@ var clientModule = angular.module('client', [])
 			    "getAllCustomers": false,
 			    "createCoupon": false,
 			    "getCoupons": false,
+			    "purchacedCoupons": false,
+		        "couponsToPurchase": false
 			};
 
 		    // function that closes all pages
@@ -120,7 +123,6 @@ var clientModule = angular.module('client', [])
 
 		    // function that only opens the clicked page
 			$rootScope.openPage = function (somePage) {
-			    debugger;
 			    angular.forEach($rootScope.pages, function (value, key) {
 
 			        if (angular.equals(key, somePage)) $rootScope.pages[key] = true;
@@ -137,7 +139,9 @@ var clientModule = angular.module('client', [])
 			    "getAllCustomers": null,
 			    "createCoupon": null,
 			    "getCoupons": null,
-			}
+			    "purchacedCoupons": null,
+			    "couponsToPurchase": null
+			};
 
 		    // function that nullifies all results
 			$rootScope.nullifyResults = function () {
@@ -751,8 +755,101 @@ var clientModule = angular.module('client', [])
 		    }
 		})
 		
-		.controller('customerPage', function ($rootScope, $scope, $http) {
-		   
+		.controller('customerPage', function ($rootScope, $scope, $http, $window, $timeout) {
+
+
+		    // get purchased coupons
+		    $rootScope.submitGetPurchacedCoupons = function () {
+		        $scope.purchasedCoupons = [];
+		        $http({
+		            method: 'GET',
+		            url: $rootScope.localHost + $rootScope.projectPath + 'customer/',
+		        })
+                .then(function successCallback(response) {
+
+                    $scope.loginResponse = response.data;
+                    $scope.purchasedCoupons = $scope.loginResponse['coupons'];
+
+                }, function errorCallback(response) {
+
+                    $scope.loginResponse = response.data;
+                    $scope.error = $scope.loginResponse['error'];
+
+                });
+		    };
+
+		    // get available coupons to purchase
+		    $rootScope.submitGetAvailableCoupons = function () {
+		        if ($rootScope.toRefreshBoughtCoupons == true) {
+		            $http({
+		                method: 'GET',
+		                url: $rootScope.localHost + $rootScope.projectPath + 'customer/couponstobuy',
+		            })
+                    .then(function successCallback(response) {
+
+                        $scope.loginResponse = response.data;
+                        $scope.availableCoupons = $scope.loginResponse['coupons'];
+
+                    }, function errorCallback(response) {
+
+                        $scope.loginResponse = response.data;
+                        $scope.error = $scope.loginResponse['error'];
+
+                    });
+		        }
+		    };
+
+		   // purchase coupon
+		    $scope.purchaseCoupon = function (coupon) {
+
+		        $http({
+		            method: 'POST',
+		            url: $rootScope.localHost + $rootScope.projectPath + 'customer',
+		            headers: {
+		                'Content-Type': 'application/json'
+		            },
+		            data: {
+		                "id": coupon.id,
+		                "title": coupon.title,
+		                "startDate": coupon.startDate,
+		                "endDate": coupon.endDate,
+		                "amount": coupon.amount,
+		                "type": coupon.type,
+		                "message": coupon.message,
+		                "price": coupon.price,
+		                "image": "image"
+		            }
+		        })
+
+                .then(function successCallback(response) {
+
+                    $scope.loginResponse = response.data;
+                    $scope.result = $scope.loginResponse['success'];
+                    $scope.boughtCoupon();
+                    $rootScope.toRefreshBoughtCoupons = true;
+                    $rootScope.submitGetAvailableCoupons();
+                    $window.scrollTo(0, 0);
+
+
+                }, function errorCallback(response) {
+
+                    $scope.loginResponse = response.data;
+                    $scope.result = $scope.loginResponse['error'];
+                    $scope.errorBoughtCoupon();
+                });
+		    };
+
+		    $scope.boughtCoupon = function () {
+
+		        $scope.showBought = true;
+		        $timeout(function () { $scope.showBought = false }, 1500);
+		    };
+
+		    $scope.errorBoughtCoupon = function () {
+		        $scope.showErrorBought = true;
+		        $timeout(function () { $scope.showErrorBought = false }, 1500);
+		    };
+
 		})
 		
 		.controller('companyPage', function ($rootScope, $scope, $http, $timeout) {
@@ -877,7 +974,7 @@ var clientModule = angular.module('client', [])
 
 					    $scope.loginResponse = response.data;
 					    $scope.result = $scope.loginResponse['success'];
-
+					    $scope.submitGetCoupons();
 
 					}, function errorCallback(response) {
 
@@ -887,12 +984,12 @@ var clientModule = angular.module('client', [])
 					});
 		    }
 
-		    $scope.searchByPrice = function (item) {
-		        if ($scope.searchPrice == undefined) {
+		    $rootScope.searchByPrice = function (item) {
+		        if ($rootScope.searchPrice == undefined) {
 		            return true;
 		        }
 		        else {
-		            if ($scope.searchPrice <= item.price) {
+		            if ($rootScope.searchPrice <= item.price) {
 
 		                return true;
 		            }
@@ -901,12 +998,12 @@ var clientModule = angular.module('client', [])
 
 		    }
 
-		    $scope.searchByAndDate = function (item) {
-		        if ($scope.searchAndDate == undefined) {
+		    $rootScope.searchByAndDate = function (item) {
+		        if ($rootScope.searchAndDate == undefined) {
 		            return true;
 		        }
 		        else {
-		            var date1 = new Date($scope.searchAndDate).getTime();
+		            var date1 = new Date($rootScope.searchAndDate).getTime();
 		            var date2 = new Date(item.endDate).getTime();
 		            if (date1 <= date2) {
 
@@ -917,6 +1014,9 @@ var clientModule = angular.module('client', [])
 
 		    }
 
+		    $rootScope.amountZero = function (item) {
+		        return item.amount > 0 ? true : false;
+		    }
 
 		})
 		
