@@ -106,7 +106,6 @@ var clientModule = angular.module('client', [])
 			    "getAllCustomers": false,
 			    "createCoupon": false,
 			    "getCoupons": false,
-			    "updateCoupon": false
 			};
 
 		    // function that closes all pages
@@ -121,7 +120,7 @@ var clientModule = angular.module('client', [])
 
 		    // function that only opens the clicked page
 			$rootScope.openPage = function (somePage) {
-
+			    debugger;
 			    angular.forEach($rootScope.pages, function (value, key) {
 
 			        if (angular.equals(key, somePage)) $rootScope.pages[key] = true;
@@ -138,7 +137,6 @@ var clientModule = angular.module('client', [])
 			    "getAllCustomers": null,
 			    "createCoupon": null,
 			    "getCoupons": null,
-			    "updateCoupon": null
 			}
 
 		    // function that nullifies all results
@@ -758,76 +756,71 @@ var clientModule = angular.module('client', [])
 		})
 		
 		.controller('companyPage', function ($rootScope, $scope, $http, $timeout) {
-             
+
 		    // create coupon
 		    $scope.submitCreateCoupon = function () {
 
-	//	        if ($scope.title != null && $scope.amount != null && $scope.type != null
-      //              && $scope.price != null && $scope.image != null && $scope.startDate != null
-       //             && $scope.endDate != null && $scope.message != null) {
+		        $http({
+		            method: 'POST',
+		            url: $rootScope.localHost + $rootScope.projectPath + 'company',
+		            data: {
+		                "title": $scope.title,
+		                "amount": $scope.amount,
+		                "type": $scope.type,
+		                "price": $scope.price,
+		                "image": "image",
+		                "startDate": $scope.startDate,
+		                "endDate": $scope.endDate,
+		                "message": $scope.message
+		            }
+		        })
 
-		            $http({
-		                method: 'POST',
-		                url: $rootScope.localHost + $rootScope.projectPath + 'company',
-		                data: {
-		                    "title": $scope.title,
-		                    "amount": $scope.amount,
-		                    "type": $scope.type,
-		                    "price": $scope.price,
-		                    "image": "image",
-		                    "startDate": $scope.startDate,
-		                    "endDate": $scope.endDate,
-		                    "message": $scope.message
-		                }
-		            })
+                .then(function successCallback(response) {
 
-					.then(function successCallback(response) {
-
-					    $scope.loginResponse = response.data;
-					    $scope.result = $scope.loginResponse['success'];
+                    $scope.loginResponse = response.data;
+                    $scope.result = $scope.loginResponse['success'];
 
 
 
-					}, function errorCallback(response) {
+                }, function errorCallback(response) {
 
-					    $scope.loginResponse = response.data;
-					    $scope.result = $scope.loginResponse['error'];
+                    $scope.loginResponse = response.data;
+                    $scope.result = $scope.loginResponse['error'];
 
 
-					});
+                });
 
-		//        } else {
-		//            $scope.result = "Fill in the form";
-		//        }
+		        //        } else {
+		        //            $scope.result = "Fill in the form";
+		        //        }
 
 		        $timeout(function () { $scope.result = null }, informationShowTimeInMillisec);
 		    }
 
-		  
-           
+
+
 		    $rootScope.submitGetCoupons = function () {
-   
-		            $http({
-		                method: 'GET',
-		                url: $rootScope.localHost + $rootScope.projectPath + 'company/coupons'
-		            })
 
-					.then(function successCallback(response) {
+		        $http({
+		            method: 'GET',
+		            url: $rootScope.localHost + $rootScope.projectPath + 'company/coupons'
+		        })
 
-					    $scope.loginResponse = response.data;
-                        
-					    $rootScope.companyCoupons = $scope.loginResponse['coupons'];
-					    
+                .then(function successCallback(response) {
 
-					}, function errorCallback(response) {
+                    $scope.loginResponse = response.data;
+                    $rootScope.companyCoupons = $scope.loginResponse['coupons'];
 
-					    $scope.loginResponse = response.data;
-					    $scope.error = $scope.loginResponse['error'];
+                }, function errorCallback(response) {
 
-					});
+                    $scope.loginResponse = response.data;
+                    $scope.error = $scope.loginResponse['error'];
+                    if ($scope.error == "no relevant coupons for that query") $rootScope.companyCoupons = [];
 
-		   
-		        
+                });
+
+
+
 		    }
 
 		    $scope.removeCoupon = function (coupon) {
@@ -849,10 +842,10 @@ var clientModule = angular.module('client', [])
 		        })
 
 					.then(function successCallback(response) {
-					   
+
 					    $scope.loginResponse = response.data;
 					    $scope.result = $scope.loginResponse['success'];
-
+					    $scope.submitGetCoupons();
 
 					}, function errorCallback(response) {
 
@@ -863,7 +856,7 @@ var clientModule = angular.module('client', [])
 		    }
 
 		    $scope.updateCoupon = function (coupon) {
-              
+
 		        $http({
 		            method: 'PUT',
 		            url: $rootScope.localHost + $rootScope.projectPath + 'company',
@@ -893,7 +886,37 @@ var clientModule = angular.module('client', [])
 
 					});
 		    }
-		
+
+		    $scope.searchByPrice = function (item) {
+		        if ($scope.searchPrice == undefined) {
+		            return true;
+		        }
+		        else {
+		            if ($scope.searchPrice <= item.price) {
+
+		                return true;
+		            }
+		            return false;
+		        }
+
+		    }
+
+		    $scope.searchByAndDate = function (item) {
+		        if ($scope.searchAndDate == undefined) {
+		            return true;
+		        }
+		        else {
+		            var date1 = new Date($scope.searchAndDate).getTime();
+		            var date2 = new Date(item.endDate).getTime();
+		            if (date1 <= date2) {
+
+		                return true;
+		            }
+		            return false;
+		        }
+
+		    }
+
 
 		})
 		
