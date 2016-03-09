@@ -1009,7 +1009,7 @@ var clientModule = angular.module('client', [])
 					});
 		    }
 
-		    $scope.updateCoupon = function (coupon) {
+		    $scope.updateCoupon = function (coupon, updatedEndDate) {
 
 		        $http({
 		            method: 'PUT',
@@ -1022,7 +1022,7 @@ var clientModule = angular.module('client', [])
 		                "price": coupon.price,
 		                "image": coupon.image,
 		                "startDate": coupon.startDate,
-		                "endDate": coupon.endDate,
+		                "endDate": updatedEndDate,
 		                "message": coupon.message
 		            }
 		        })
