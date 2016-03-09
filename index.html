@@ -378,11 +378,12 @@
             </div>
             <!-- customer page ends -->
             <!-- company page starts -->
-                <div ng-controller="companyPage" ng-hide="whoIsLoggedIn!='company'">
+            <div ng-controller="companyPage" ng-hide="whoIsLoggedIn!='company'">
                     <div ng-show="pages.createCoupon">
                         <h2>Create coupon</h2>
                         <br />
-
+                        <div class="alert alert-info" role="alert" ng-show="showCreateCoupon">{{ result }}</div>
+                        <div class="alert alert-danger" role="alert" ng-show="showErrorCreateCoupon">Error: {{ result }}</div>
                         <form class="form-inline">
                             <div class="form-group">
                                 <label class="sr-only" for="inputTitle">Title</label>
@@ -416,7 +417,7 @@
                                 <label class="sr-only" for="inputTitle">price</label>
                                 <br />
                                 <p>price</p>
-                                <input type="number" min="1" max="1000" class="form-control" ng-model="price">
+                                <input type="number" step="0.01" class="form-control" ng-model="price">
                             </div>
                             <div class="form-group">
                                 <label class="sr-only" for="inputTitle">image</label>
@@ -456,11 +457,13 @@
                             <br />
                             <button type="submit" class="btn btn-default" ng-click="submitCreateCoupon()">Create</button>
                         </form>
-                        <div id="Div1">{{ result }}</div>
                     </div>
 
                     <div ng-show="pages.getCoupons">
                         <form class="form-inline">
+                            <br />
+                            <div class="alert alert-info" role="alert" ng-show="showGetCoupons">{{ result }}</div>
+                            <div class="alert alert-danger" role="alert" ng-show="showErrorGetCoupons">Error: {{ result }}</div>
                             <div class="form-group">
                                 <label class="sr-only" for="inputTitle">id</label>
                                 <br />
@@ -525,22 +528,22 @@
                                     <tr ng-repeat="coupon in companyCoupons | filter : search | filter :searchByPrice | filter :searchByAndDate">
                                         <td>{{ coupon.id }}</td>
                                         <td>{{ coupon.title }}</td>
-                                        <td>{{ convertToDate(coupon.startDate) | date : dateFormat }}</td>
-                                        <td ng-click="couponShowUpdate = true" ng-hide="couponShowUpdate">{{ convertToDate(coupon.endDate)  | date : dateFormat }}</td>
+                                        <td>{{ coupon.startDate | date : format}}</td>
+                                        <td ng-click="couponShowUpdate = true" ng-hide="couponShowUpdate">{{ coupon.endDate | date : format}}</td>
                                         <td ng-show="couponShowUpdate">
-                                            <input type="date" class="form-control" ng-init="updateEndDate = convertToDate(coupon.endDate)" ng-model="updateEndDate">
+                                            <input type="date" class="form-control" ng-model="coupon.endDate">
                                         </td>
                                         <td>{{ coupon.amount }}</td>
                                         <td>{{ coupon.type }}</td>
                                         <td>{{ coupon.message }}</td>
                                         <td ng-click="couponShowUpdate = true" ng-hide="couponShowUpdate">{{ coupon.price | currency}}</td>
                                         <td ng-show="couponShowUpdate">
-                                            <input type="text" class="form-control" ng-model="coupon.price">
+                                            <input type="number" step="0.01" class="form-control" ng-model="coupon.price">
                                         </td>
                                         <td>{{ coupon.image }}</td>
                                         <td>
                                             <button ng-click="removeCoupon(coupon)">remove</button>
-                                            <button ng-click="updateCoupon(coupon, updateEndDate)">update</button>
+                                            <button ng-click="updateCoupon(coupon)">update</button>
                                         </td>
 
                                     </tr>
@@ -548,10 +551,9 @@
                             </table>
                         </div>
                     </div>
-                    </div>
-                    <!-- company page ends -->
-
-                </div>
+            </div>
+            <!-- company page ends -->
+		</div>
     </div>
     <div id="footer">
         &copy; This site was created by Meir Veixelbaum & Maxim Golman.

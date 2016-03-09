@@ -883,48 +883,71 @@ var clientModule = angular.module('client', [])
 
 		})
 		
+		// company page
 		.controller('companyPage', function ($rootScope, $scope, $http, $timeout) {
 
 		    // create coupon
 		    $scope.submitCreateCoupon = function () {
 
-		        $http({
-		            method: 'POST',
-		            url: $rootScope.localHost + $rootScope.projectPath + 'company',
-		            data: {
-		                "title": $scope.title,
-		                "amount": $scope.amount,
-		                "type": $scope.type,
-		                "price": $scope.price,
-		                "image": "image",
-		                "startDate": $scope.startDate,
-		                "endDate": $scope.endDate,
-		                "message": $scope.message
-		            }
-		        })
+		        if ($scope.title != null && $scope.amount != null && $scope.type != null
+                    && $scope.price != null  && $scope.startDate != null
+                    && $scope.endDate != null && $scope.message != null) {
+
+		            $http({
+		                method: 'POST',
+		                url: $rootScope.localHost + $rootScope.projectPath + 'company',
+		                data: {
+		                    "title": $scope.title,
+		                    "amount": $scope.amount,
+		                    "type": $scope.type,
+		                    "price": $scope.price,
+		                    "image": "image",
+		                    "startDate": $scope.startDate,
+		                    "endDate": $scope.endDate,
+		                    "message": $scope.message
+		                }
+		            })
 
                 .then(function successCallback(response) {
 
                     $scope.loginResponse = response.data;
                     $scope.result = $scope.loginResponse['success'];
+                    $scope.couponCreate();
 
-
+                    $scope.title = null;
+                    $scope.amount = null;
+                    $scope.type = null;
+                    $scope.price = null;
+                    $scope.image = null;
+                    $scope.startDate = null;
+                    $scope.endDate = null;
+                    $scope.message = null;
 
                 }, function errorCallback(response) {
 
                     $scope.loginResponse = response.data;
                     $scope.result = $scope.loginResponse['error'];
+                    $scope.errorCouponCreate();
 
-
-                });
-
-		        //        } else {
-		        //            $scope.result = "Fill in the form";
-		        //        }
+                })} else {
+		            $scope.result = "Fill in the form";
+		            $scope.errorCouponCreate();
+		        };
+    
 
 		        $timeout(function () { $scope.result = null }, informationShowTimeInMillisec);
 		    }
 
+		    $scope.couponCreate = function () {
+
+		        $scope.showCreateCoupon = true;
+		        $timeout(function () { $scope.showCreateCoupon = false }, 1500);
+		    };
+
+		    $scope.errorCouponCreate = function () {
+		        $scope.showErrorCreateCoupon = true;
+		        $timeout(function () { $scope.showErrorCreateCoupon = false }, 1500);
+		    };
 
 
 		    $rootScope.submitGetCoupons = function () {
@@ -942,8 +965,9 @@ var clientModule = angular.module('client', [])
                 }, function errorCallback(response) {
 
                     $scope.loginResponse = response.data;
-                    $scope.error = $scope.loginResponse['error'];
-                    if ($scope.error == "no relevant coupons for that query") $rootScope.companyCoupons = [];
+                    $scope.result = $scope.loginResponse['error'];
+                    if ($scope.result == "no relevant coupons for that query") $rootScope.companyCoupons = [];
+                    $scope.showErrorCoupons();
 
                 });
 
@@ -973,18 +997,19 @@ var clientModule = angular.module('client', [])
 
 					    $scope.loginResponse = response.data;
 					    $scope.result = $scope.loginResponse['success'];
+					    $scope.showCoupons();
 					    $scope.submitGetCoupons();
 
 					}, function errorCallback(response) {
 
 					    $scope.loginResponse = response.data;
-					    $scope.error = $scope.loginResponse['error'];
+					    $scope.result = $scope.loginResponse['error'];
+					    $scope.showErrorCoupons();
 
 					});
 		    }
 
-            // update coupon
-		    $scope.updateCoupon = function (coupon, updatedEndDate) {
+		    $scope.updateCoupon = function (coupon) {
 
 		        $http({
 		            method: 'PUT',
@@ -997,7 +1022,7 @@ var clientModule = angular.module('client', [])
 		                "price": coupon.price,
 		                "image": coupon.image,
 		                "startDate": coupon.startDate,
-		                "endDate": updatedEndDate,
+		                "endDate": coupon.endDate,
 		                "message": coupon.message
 		            }
 		        })
@@ -1006,13 +1031,15 @@ var clientModule = angular.module('client', [])
 
 					    $scope.loginResponse = response.data;
 					    $scope.result = $scope.loginResponse['success'];
+					    $scope.showCoupons();
 					    $scope.submitGetCoupons();
 
 					}, function errorCallback(response) {
 
-					    $scope.loginResponse = response.data;
-					    $scope.error = $scope.loginResponse['error'];
 
+					    $scope.loginResponse = response.data;
+					    $scope.result = $scope.loginResponse['success'];
+					    $scope.showErrorCoupons();
 					});
 		    }
 
@@ -1049,13 +1076,27 @@ var clientModule = angular.module('client', [])
 		    $rootScope.amountZero = function (item) {
 		        return item.amount > 0 ? true : false;
 		    }
+            
 
-		    $rootScope.convertToDate = function (timeStamp) {
+		    $scope.showCoupons = function () {
+
+		        $scope.showGetCoupons = true;
+		        $timeout(function () { $scope.showGetCoupons = false }, 1500);
+		    };
+
+		    $scope.showErrorCoupons = function () {
+
+		        $scope.showErrorGetCoupons = true;
+		        $timeout(function () { $scope.showErrorGetCoupons = false }, 1500);
+		    };
+		  
+			$rootScope.convertToDate = function (timeStamp) {
 		        var newNum = timeStamp;
 		        return new Date(newNum);
 		    }
 
 		    $rootScope.dateFormat = 'dd-MM-yyyy';
+
 		})
 		
 		
