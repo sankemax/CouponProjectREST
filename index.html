@@ -282,8 +282,8 @@
                                     <tr ng-repeat="coupon in availableCoupons | filter : search | filter :searchByPrice | filter :searchByAndDate | filter: amountZero">
                                         <td>{{ coupon.id }}</td>
                                         <td>{{ coupon.title }}</td>
-                                        <td>{{ coupon.startDate | date : format}}</td>
-                                        <td>{{ coupon.endDate | date : format}}</td>
+                                        <td>{{ convertToDate(coupon.startDate) | date : dateFormat }}</td>
+                                        <td>{{ convertToDate(coupon.endDate) | date : dateFormat }}</td>
                                         <td>{{ coupon.amount }}</td>
                                         <td>{{ coupon.type }}</td>
                                         <td>{{ coupon.message }}</td>
@@ -364,8 +364,8 @@
                                     <tr ng-repeat="coupon in purchasedCoupons | filter : search | filter :searchByPrice | filter :searchByAndDate">
                                         <td>{{ coupon.id }}</td>
                                         <td>{{ coupon.title }}</td>
-                                        <td>{{ coupon.startDate | date : format}}</td>
-                                        <td>{{ coupon.endDate | date : format}}</td>
+                                        <td>{{ convertToDate(coupon.startDate) | date : dateFormat }}</td>
+                                        <td>{{ convertToDate(coupon.endDate)  | date : dateFormat }}</td>
                                         <td>{{ coupon.type }}</td>
                                         <td>{{ coupon.message }}</td>
                                         <td>{{ coupon.price | currency}}</td>
@@ -525,10 +525,10 @@
                                     <tr ng-repeat="coupon in companyCoupons | filter : search | filter :searchByPrice | filter :searchByAndDate">
                                         <td>{{ coupon.id }}</td>
                                         <td>{{ coupon.title }}</td>
-                                        <td>{{ coupon.startDate | date : format}}</td>
-                                        <td ng-click="couponShowUpdate = true" ng-hide="couponShowUpdate">{{ coupon.endDate | date : format}}</td>
+                                        <td>{{ convertToDate(coupon.startDate) | date : dateFormat }}</td>
+                                        <td ng-click="couponShowUpdate = true" ng-hide="couponShowUpdate">{{ convertToDate(coupon.endDate)  | date : dateFormat }}</td>
                                         <td ng-show="couponShowUpdate">
-                                            <input type="date" class="form-control" ng-model="coupon.endDate">
+                                            <input type="date" class="form-control" ng-init="updateEndDate = convertToDate(coupon.endDate)" ng-model="updateEndDate">
                                         </td>
                                         <td>{{ coupon.amount }}</td>
                                         <td>{{ coupon.type }}</td>
@@ -540,7 +540,7 @@
                                         <td>{{ coupon.image }}</td>
                                         <td>
                                             <button ng-click="removeCoupon(coupon)">remove</button>
-                                            <button ng-click="updateCoupon(coupon)">update</button>
+                                            <button ng-click="updateCoupon(coupon, updateEndDate)">update</button>
                                         </td>
 
                                     </tr>

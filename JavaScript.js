@@ -757,6 +757,36 @@ var clientModule = angular.module('client', [])
 		
 		.controller('customerPage', function ($rootScope, $scope, $http, $window, $timeout) {
 
+            // filters
+		    $scope.searchByPrice = function (item) {
+		        if ($scope.searchPrice == undefined) {
+		            return true;
+		        }
+		        else {
+		            if ($scope.searchPrice <= item.price) {
+
+		                return true;
+		            }
+		            return false;
+		        }
+
+		    }
+
+		    $scope.searchByAndDate = function (item) {
+		        if ($scope.searchAndDate == undefined) {
+		            return true;
+		        }
+		        else {
+		            var date1 = new Date($scope.searchAndDate).getTime();
+		            var date2 = new Date(item.endDate).getTime();
+		            if (date1 <= date2) {
+
+		                return true;
+		            }
+		            return false;
+		        }
+
+		    }
 
 		    // get purchased coupons
 		    $rootScope.submitGetPurchacedCoupons = function () {
@@ -836,6 +866,7 @@ var clientModule = angular.module('client', [])
                     $scope.loginResponse = response.data;
                     $scope.result = $scope.loginResponse['error'];
                     $scope.errorBoughtCoupon();
+                    $window.scrollTo(0, 0);
                 });
 		    };
 
@@ -952,7 +983,8 @@ var clientModule = angular.module('client', [])
 					});
 		    }
 
-		    $scope.updateCoupon = function (coupon) {
+            // update coupon
+		    $scope.updateCoupon = function (coupon, updatedEndDate) {
 
 		        $http({
 		            method: 'PUT',
@@ -965,7 +997,7 @@ var clientModule = angular.module('client', [])
 		                "price": coupon.price,
 		                "image": coupon.image,
 		                "startDate": coupon.startDate,
-		                "endDate": coupon.endDate,
+		                "endDate": updatedEndDate,
 		                "message": coupon.message
 		            }
 		        })
@@ -984,12 +1016,12 @@ var clientModule = angular.module('client', [])
 					});
 		    }
 
-		    $rootScope.searchByPrice = function (item) {
-		        if ($rootScope.searchPrice == undefined) {
+		    $scope.searchByPrice = function (item) {
+		        if ($scope.searchPrice == undefined) {
 		            return true;
 		        }
 		        else {
-		            if ($rootScope.searchPrice <= item.price) {
+		            if ($scope.searchPrice <= item.price) {
 
 		                return true;
 		            }
@@ -998,12 +1030,12 @@ var clientModule = angular.module('client', [])
 
 		    }
 
-		    $rootScope.searchByAndDate = function (item) {
-		        if ($rootScope.searchAndDate == undefined) {
+		    $scope.searchByAndDate = function (item) {
+		        if ($scope.searchAndDate == undefined) {
 		            return true;
 		        }
 		        else {
-		            var date1 = new Date($rootScope.searchAndDate).getTime();
+		            var date1 = new Date($scope.searchAndDate).getTime();
 		            var date2 = new Date(item.endDate).getTime();
 		            if (date1 <= date2) {
 
@@ -1018,6 +1050,12 @@ var clientModule = angular.module('client', [])
 		        return item.amount > 0 ? true : false;
 		    }
 
+		    $rootScope.convertToDate = function (timeStamp) {
+		        var newNum = timeStamp;
+		        return new Date(newNum);
+		    }
+
+		    $rootScope.dateFormat = 'dd-MM-yyyy';
 		})
 		
 		
