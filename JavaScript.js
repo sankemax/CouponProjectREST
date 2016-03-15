@@ -3,9 +3,6 @@ var clientModule = angular.module('client', [])
 		
         // page header
 		.controller('pageHeader', function($scope) {
-
-		    
-
 		})
 
 		// login
@@ -170,6 +167,22 @@ var clientModule = angular.module('client', [])
 		
         // main page
 		.controller('mainPage', function($rootScope, $scope, $http) {
+            
+            $rootScope.inputValidation = function(fieldValue,type) {
+                var pattern; 
+                if (type == 'text') {
+                    pattern = /^[A-Za-z0-9 ]{3,20}$/;
+                } else if (type == 'email') {
+                    pattern = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{1,6}(?:\.[a-z]{1})?)$/i;
+                } else if (type == 'password') {
+                    pattern = /^[A-Za-z0-9!@#$%^&*()_]{3,20}$/;
+                }
+                if (fieldValue != undefined && fieldValue != null && pattern.test(fieldValue)) return true;
+                else return false;
+            }
+            
+            // finish it
+            //$rootScope.showSomeDiv = function(divname)
 		})
 		
         // admin page
@@ -177,8 +190,7 @@ var clientModule = angular.module('client', [])
 
             // create company
 		    $scope.submitCreateCompany = function () {
-
-		        if ($scope.name != null && $scope.pass != null && $scope.email != null) {
+		        if ($rootScope.inputValidation($scope.name, 'text') && $rootScope.inputValidation($scope.pass, 'password') && $rootScope.inputValidation($scope.email, 'email')) {
 
 		            $http({
 		                method: 'POST',
@@ -195,19 +207,24 @@ var clientModule = angular.module('client', [])
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["createCompany"] = $scope.loginResponse['success'];
 					    $scope.toRefreshCompanies = true;
-
+                        $scope.showCreateSuccess = true;
+                         
 					}, function errorCallback(response) {
 
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["createCompany"] = $scope.loginResponse['error'];
-
-
+                        $scope.showCreateError = true;
 					});
 
 		        } else {
-		            $rootScope.results["createCompany"] = "Fill in the form";
+		            $rootScope.results["createCompany"] = "Invalid form fill";
+                    $scope.showCreateError = true;
 		        }
-		        $timeout(function () { $rootScope.results["createCompany"] = null }, informationShowTimeInMillisec);
+                
+		        $timeout(function () { 
+                    $scope.showCreateError = false;
+                    $scope.showCreateSuccess = false; 
+                    }, informationShowTimeInMillisec);
 				$scope.name = null;
 				$scope.pass = null;
 				$scope.email = null;
@@ -252,17 +269,12 @@ var clientModule = angular.module('client', [])
 
 		    }
 
-		    // update company
+		    // update company		        
 
-		    $scope.compCheckUpdate = function (name, oldPass, newPass, oldEmail, newEmail) {
-		        if (oldPass != newPass || oldEmail != newEmail) {
-		            $scope.submitUpdateCompany(name, newPass, newEmail);
-		        }
-		    }
-
-		    $scope.submitUpdateCompany = function (name, pass, email) {
-		        if (pass != null && email != null) {
-
+		    $scope.submitUpdateCompany = function (name, oldPass, newPass, oldEmail, newEmail) {
+                
+                if ($rootScope.inputValidation(newPass, 'password') && $rootScope.inputValidation(newEmail, 'email') && (oldPass != newPass || oldEmail != newEmail)) {
+		         
 		            $http({
 		                method: "PUT",
 		                url: $rootScope.localHost + $rootScope.projectPath + 'admin/updcomp',
@@ -272,41 +284,48 @@ var clientModule = angular.module('client', [])
 		                },
 		                data: {
 		                    "name": name,
-		                    "pass": pass,
-		                    "email": email
+		                    "pass": newPass,
+		                    "email": newEmail
 		                }
 		            })
 
 					.then(function successCallback(response) {
+                        
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["updateCompany"] = $scope.loginResponse['success'];
 					    $scope.updatedCompany();
-				        $compShowUpdate = false;
+				        $scope.compShowUpdate = false;
 				        $scope.toRefreshCompanies = true;
 				        $scope.submitGetAllCompanies();
 				        $scope.compNullify('all');
+                        $scope.showUpdatedComp = true;
 				        $window.scrollTo(0, 0);
 
 					}, function errorCallback(response) {
-
-                        // TODO write something relevant
+                        
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["updateCompany"] = $scope.loginResponse['error'];
+                        $scope.showErrorComp = true;
+                        $scope.updatedCompany();
+                        $scope.compShowUpdate = false;
                         
 					});
 
 		        } else {
-                    // TODO write something relevant. there are no results anymore
-		            $rootScope.results["updateCompany"] = "Fill in the form";
+		            $rootScope.results["updateCompany"] = "Invalid fill or no change to original";
+                    $scope.showErrorComp = true;
+                    $scope.updatedCompany();
 		        }
 
-
-				$scope.updatedCompany = function () {
-
-				    $scope.showUpdatedComp = true;
-				    $timeout(function () { $scope.showUpdatedComp = false }, 3500);
-				}
 		    }
+            
+            $scope.updatedCompany = function () {
+
+				    $timeout(function () { 
+                        $scope.showUpdatedComp = false;
+                        $scope.showErrorComp = false;
+                     }, informationShowTimeInMillisec);
+			}
 
 		    // get company by id ------- currently not used -------
 		    $scope.submitGetCompanyById = function () {
@@ -464,7 +483,7 @@ var clientModule = angular.module('client', [])
 		    // create customer
 		    $scope.submitCreateCustomer = function () {
 
-		        if ($scope.custName != null && $scope.custPass != null) {
+		        if ($rootScope.inputValidation($scope.custName, 'text') && $rootScope.inputValidation($scope.custPass, 'password')) {
 
 		            $http({
 		                method: 'POST',
@@ -480,19 +499,25 @@ var clientModule = angular.module('client', [])
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["createCustomer"] = $scope.loginResponse['success'];
 					    $scope.toRefreshCustomers = true;
+                        $scope.showCreateCustSuccess = true;
 
 					}, function errorCallback(response) {
 
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["createCustomer"] = $scope.loginResponse['error'];
-
+                        $scope.showCreateCustError = true;
 
 					});
 
 		        } else {
 		            $rootScope.results["createCustomer"] = "Fill in the form";
+                    $scope.showCreateCustError = true;
 		        }
-		        $timeout(function () { $rootScope.results["createCustomer"] = null }, informationShowTimeInMillisec);
+                
+                $timeout(function () { 
+                    $scope.showCreateCustError = false;
+                    $scope.showCreateCustSuccess = false; 
+                    }, informationShowTimeInMillisec);
 				$scope.custName = null;
 				$scope.custPass = null;
 
@@ -538,7 +563,7 @@ var clientModule = angular.module('client', [])
 		    $scope.deletedCustomer = function () {
 
 		        $scope.showDeletedCust = true;
-		        $timeout(function () { $scope.showDeletedCust = false }, 3500);
+		        $timeout(function () { $scope.showDeletedCust = false }, informationShowTimeInMillisec);
 
 		    }
 
@@ -551,7 +576,8 @@ var clientModule = angular.module('client', [])
 		    }
 
 		    $scope.submitUpdateCustomer = function (name, pass) {
-		        if (pass != null) {
+                //debugger;
+		        if ($rootScope.inputValidation(pass, 'password')) {
 
 		            $http({
 		                method: "PUT",
@@ -569,6 +595,7 @@ var clientModule = angular.module('client', [])
 					.then(function successCallback(response) {
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["updateCustomer"] = $scope.loginResponse['success'];
+                        $scope.showUpdatedCust = true;
 					    $scope.updatedCustomer();
 					    $custShowUpdate = false;
 					    $scope.toRefreshCustomers = true;
@@ -578,26 +605,28 @@ var clientModule = angular.module('client', [])
 
 					}, function errorCallback(response) {
 
-					    // TODO write something relevant
 					    $scope.loginResponse = response.data;
 					    $rootScope.results["updateCustomer"] = $scope.loginResponse['error'];
-
+                        $scope.showErrorCust = true;
+                        $scope.updatedCustomer();
 					});
 
 		        } else {
-		            // TODO write something relevant. there are no results anymore
-		            $rootScope.results["updateCustomer"] = "Fill in the form";
+		            $rootScope.results["updateCustomer"] = "Fill in the form Correctly";
+                    $scope.showErrorCust = true;
+                    $scope.updatedCustomer();
 		        }
 
 
-		        $scope.updatedCustomer = function () {
-
-		            $scope.showUpdatedCust = true;
-		            $timeout(function () { $scope.showUpdatedCust = false }, 3500);
-		        }
 		    }
+		        $scope.updatedCustomer = function () {
+		            $timeout(function () {
+                        $scope.showUpdatedCust = false;
+                        $scope.showErrorCust = false;
+                    }, informationShowTimeInMillisec);
+		        }
 
-		    // get customer by id
+		    // get customer by id --------------- not used
 		    $scope.submitGetCustomerById = function () {
 
 		        if ($scope.cId != null) {
@@ -630,7 +659,7 @@ var clientModule = angular.module('client', [])
 
 		    }
 
-		    // get customer by name
+		    // get customer by name --------------- not used
 		    $scope.submitGetCustomerByName = function () {
 
 		        if ($scope.cName != null) {

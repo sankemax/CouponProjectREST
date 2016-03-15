@@ -88,13 +88,15 @@
                 <div ng-show="pages.createCompany">
                     Create Company
                     <form class="form-inline">
+                        <div class="alert alert-info" role="alert" ng-show="showCreateError">{{ results.createCompany }}</div>
+                        <div class="alert alert-success" role="alert" ng-show="showCreateSuccess">{{ results.createCompany }}</div>
                         <div class="form-group">
                             <label class="sr-only" for="inputName">Name</label>
-                            <input type="text" class="form-control" id="inputName" placeholder="Company Name" ng-model="name">
+                            <input type="text" class="form-control" id="inputName" placeholder="Name (min len = 3)" ng-model="name">
                         </div>
                         <div class="form-group">
                             <label class="sr-only" for="inputPassword">Password</label>
-                            <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="pass">
+                            <input type="text" class="form-control" id="inputPassword" placeholder="Password (min len = 3)" ng-model="pass">
                         </div>
                         <div class="form-group">
                             <label class="sr-only" for="inputEmail">Password</label>
@@ -102,7 +104,6 @@
                         </div>
                         <button type="submit" class="btn btn-default" ng-click="submitCreateCompany()">Create</button>
                     </form>
-                    <div id="formInfo">{{ results.createCompany }}</div>
                 </div>
                 <div ng-show="pages.getAllCompanies">
                     <div id="company-options">
@@ -122,6 +123,7 @@
                         <div class="panel-heading">Companies present in the system</div>
                         <div class="alert alert-info" role="alert" ng-show="showDeletedComp">Company Deleted!</div>
                         <div class="alert alert-success" role="alert" ng-show="showUpdatedComp">Company Updated!</div>
+                        <div class="alert alert-info" role="alert" ng-show="showErrorComp">{{ results.updateCompany }}</div>
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -143,7 +145,7 @@
                                     <td ng-show="compShowUpdate">
                                         <input type="text" class="form-control" id="email" ng-model="compNewEmail" ng-init="compNewEmail = company.email">
                                     </td>
-                                    <td><button type="button" class="btn btn-default" ng-click="compCheckUpdate(company.name, compOldPass, compNewPass, compOldEmail, compNewEmail)">Update</button></td>
+                                    <td><button type="button" class="btn btn-default" ng-click="submitUpdateCompany(company.name, compOldPass, compNewPass, compOldEmail, compNewEmail)">Update</button></td>
                                     <td><button type="button" class="btn btn-default" ng-click="compShowUpdate = false;company.pass = compOldPass;company.email = compOldEmail" ng-show="compShowUpdate">Cancel Update</button></td>
                                     <td ng-hide="compShowUpdate"><button type="button" class="btn btn-default" ng-click="submitRemoveCompany(company)">Remove</button></td>
                                 </tr>
@@ -154,17 +156,18 @@
                 <div ng-show="pages.createCustomer">
                     Create Customer
                     <form class="form-inline">
+                        <div class="alert alert-info" role="alert" ng-show="showCreateCustError">{{ results.createCustomer }}</div>
+                        <div class="alert alert-success" role="alert" ng-show="showCreateCustSuccess">{{ results.createCustomer }}</div>
                         <div class="form-group">
                             <label class="sr-only" for="inputName">Name</label>
-                            <input type="text" class="form-control" id="inputName" placeholder="Customer Name" ng-model="custName">
+                            <input type="text" class="form-control" id="inputName" placeholder="Name (min len = 3)" ng-model="custName">
                         </div>
                         <div class="form-group">
                             <label class="sr-only" for="inputPassword">Password</label>
-                            <input type="text" class="form-control" id="inputPassword" placeholder="Password" ng-model="custPass">
+                            <input type="text" class="form-control" id="inputPassword" placeholder="Password (min len = 3)" ng-model="custPass">
                         </div>
                         <button type="submit" class="btn btn-default" ng-click="submitCreateCustomer()">Create</button>
                     </form>
-                    <div id="formInfo">{{ results.createCustomer }}</div>
                 </div>
                 <div ng-show="pages.getAllCustomers">
                     <div id="customer-options">
@@ -184,6 +187,7 @@
                         <div class="panel-heading">Customers present in the system</div>
                         <div class="alert alert-info" role="alert" ng-show="showDeletedCust">Customer Deleted!</div>
                         <div class="alert alert-success" role="alert" ng-show="showUpdatedCust">Customer Updated!</div>
+                        <div class="alert alert-info" role="alert" ng-show="showErrorCust">{{ results.updateCustomer }}</div>
                         <table class="table table-hover">
                             <thead>
                                 <tr>
