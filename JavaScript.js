@@ -916,11 +916,33 @@ var clientModule = angular.module('client', [])
 		.controller('companyPage', function ($rootScope, $scope, $http, $timeout) {
 
 		    // create coupon
+            
 		    $scope.submitCreateCoupon = function () {
-
+                
 		        if ($scope.title != null && $scope.amount != null && $scope.type != null
                     && $scope.price != null  && $scope.startDate != null
                     && $scope.endDate != null && $scope.message != null) {
+                    
+                
+                     $http({
+		                method: 'POST',
+		                url: $rootScope.localHost + $rootScope.projectPath + 'company/upload',
+		                file :  $scope.file
+		            })
+                    
+                    .then(function successCallback(response) {
+
+                    $scope.loginResponse = response.data;
+                    $rootScope.urlImg = $scope.loginResponse['success'];
+                    
+
+                }, function errorCallback(response) {
+
+                    $scope.loginResponse = response.data;
+                    $scope.result = $scope.loginResponse['error'];
+                    $scope.errorCouponCreate();
+
+                })
 
 		            $http({
 		                method: 'POST',
@@ -930,7 +952,7 @@ var clientModule = angular.module('client', [])
 		                    "amount": $scope.amount,
 		                    "type": $scope.type,
 		                    "price": $scope.price,
-		                    "image": "image",
+		                    "image": $rootScope.urlImg,
 		                    "startDate": $scope.startDate,
 		                    "endDate": $scope.endDate,
 		                    "message": $scope.message
