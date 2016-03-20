@@ -180,7 +180,7 @@ var clientModule = angular.module('client', [])
                 if (fieldValue != undefined && fieldValue != null && pattern.test(fieldValue)) return true;
                 else return false;
             }
-            
+   
             // finish it
             //$rootScope.showSomeDiv = function(divname)
 		})
@@ -785,9 +785,11 @@ var clientModule = angular.module('client', [])
             
 		    $scope.submitCreateCoupon = function () {
                 
-		        if ($scope.title != null && $scope.amount != null && $scope.type != null
-                    && $scope.price != null  && $scope.startDate != null
-                    && $scope.endDate != null && $scope.message != null) {
+		        if ($scope.inputValidationCoupon($scope.title, 'text') && $scope.inputValidationCoupon($scope.message, 'message') &&
+                    $scope.inputValidationCoupon($scope.amount, 'number') && $scope.inputValidationCoupon($scope.price, 'number') &&
+                    $scope.inputValidationCoupon($scope.startDate, 'date') && $scope.inputValidationCoupon($scope.endDate, 'date') &&
+                    $scope.inputValidationCoupon($scope.type, 'type') && $scope.inputValidationCoupon($('#chosenImage')[0].value, 'image') &&
+                    $scope.inputValidationDate($scope.startDate, $scope.endDate)) {
 
 		            $http({
 		                method: 'POST',
@@ -818,6 +820,8 @@ var clientModule = angular.module('client', [])
                     $scope.startDate = null;
                     $scope.endDate = null;
                     $scope.message = null;
+                    $('#chosenImage')[0].value = null;
+                    
 
                 }, function errorCallback(createResponse) {
 
@@ -826,7 +830,7 @@ var clientModule = angular.module('client', [])
                     $scope.errorCouponCreate();
 
                 })} else {
-		            $scope.result = "Fill in the form";
+		           
 		            $scope.errorCouponCreate();
 		        };
     
@@ -864,20 +868,69 @@ var clientModule = angular.module('client', [])
                         }});               
             }
 
+            $scope.inputValidationCoupon = function (fieldValue, type) {
+                var pattern;
+                if (fieldValue == undefined && fieldValue == null) {
+                    $scope.result = "Fill in the form";
+                    
+                    return false;
+                }
+                if (type == 'number') {
+                    if (fieldValue > 0) return true;
+                    $scope.result = "Invalid number";
+                    return false;
+                }
+                if (type == 'text') {
+                    pattern = /^[A-Za-z0-9 ]{8,20}$/;
+                    if (pattern.test(fieldValue)) return true;
+                    $scope.result = "Invalid title";
+                    return false;
+                }
+
+                if (type == 'message') {
+                    pattern = /^[A-Za-z0-9 ]{20,150}$/;
+                    if (pattern.test(fieldValue)) return true;
+                    $scope.result = "Invalid message";
+                    return false;
+                }
+                
+                return true;
+              
+            }
+
+            $scope.inputValidationDate = function (startDate, endDate) {
+                
+
+                var sDate = new Date(startDate).getTime();
+                var eDate = new Date(endDate).getTime();
+        
+                if (sDate >= eDate) {
+                    $scope.result = "The start date after the end date";
+                    return false;
+                }
+                if (eDate < new Date().getTime()) {
+                    $scope.result = "Completion date before current date";
+                    return false;
+                }
+                return true;
+
+            }			
+            	
+            	
+
 		    $scope.couponCreate = function () {
 
 		        $scope.showCreateCoupon = true;
-		        $timeout(function () { $scope.showCreateCoupon = false }, 1500);
+		        $timeout(function () { $scope.showCreateCoupon = false }, 3000);
 		    };
 
 		    $scope.errorCouponCreate = function () {
 		        $scope.showErrorCreateCoupon = true;
-		        $timeout(function () { $scope.showErrorCreateCoupon = false }, 1500);
+		        $timeout(function () { $scope.showErrorCreateCoupon = false }, 3000);
 		    };
-
-
-		    $rootScope.submitGetCoupons = function () {
-
+		    	
+		    $rootScope.submitGetCoupons = function (show) {
+		    	
 		        $http({
 		            method: 'GET',
 		            url: $rootScope.localHost + $rootScope.projectPath + 'company/coupons'
@@ -891,16 +944,16 @@ var clientModule = angular.module('client', [])
                 }, function errorCallback(response) {
 
                     $scope.loginResponse = response.data;
-                    $scope.result = $scope.loginResponse['error'];
-                    if ($scope.result == "no relevant coupons for that query") $rootScope.companyCoupons = [];
-                    $scope.showErrorCoupons();
-
+                    if (show == true) $scope.result = $scope.loginResponse['error'];
+                    if ($scope.loginResponse['error'] == "no relevant coupons for that query") $rootScope.companyCoupons = [];
+                    if (show == true) $scope.showErrorCoupons();
+               
                 });
 
 
 
 		    }
-
+		    	
 		    $scope.removeCoupon = function (coupon) {
 
 		        $http({
@@ -924,7 +977,7 @@ var clientModule = angular.module('client', [])
 					    $scope.loginResponse = response.data;
 					    $scope.result = $scope.loginResponse['success'];
 					    $scope.showCoupons();
-					    $scope.submitGetCoupons();
+					    $scope.submitGetCoupons(false);
 
 					}, function errorCallback(response) {
 
@@ -958,7 +1011,7 @@ var clientModule = angular.module('client', [])
 					    $scope.loginResponse = response.data;
 					    $scope.result = $scope.loginResponse['success'];
 					    $scope.showCoupons();
-					    $scope.submitGetCoupons();
+					    $scope.submitGetCoupons(true);
 
 					}, function errorCallback(response) {
 
@@ -1007,13 +1060,13 @@ var clientModule = angular.module('client', [])
 		    $scope.showCoupons = function () {
 
 		        $scope.showGetCoupons = true;
-		        $timeout(function () { $scope.showGetCoupons = false }, 1500);
-		    };
+		        $timeout(function () { $scope.showGetCoupons = false }, 3000);
+		    };	
 
 		    $scope.showErrorCoupons = function () {
 
 		        $scope.showErrorGetCoupons = true;
-		        $timeout(function () { $scope.showErrorGetCoupons = false }, 1500);
+		        $timeout(function () { $scope.showErrorGetCoupons = false }, 3000);
 		    };
 		  
 			$rootScope.convertToDate = function (timeStamp) {

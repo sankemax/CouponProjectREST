@@ -21,7 +21,7 @@
             </div>
             <div ng-controller="logout" ng-hide="loggedIn" id="logout">
                 <button type="button" class="btn btn-link" ng-click="logOut()">Logout</button>
-            </div>
+            </div>	
         </div>
         </div>
         <div ng-controller="menu" id="menu">
@@ -57,7 +57,7 @@
                 <div ng-controller="companyMenu" id="company-menu" ng-hide="whoIsLoggedIn!='company'">
                     <ul class="nav nav-pills nav-stacked">
                         <li ng-click="openPage('createCoupon')"><a href="">Create Coupon</a></li>
-                        <li ng-click="openPage('getCoupons');submitGetCoupons()"><a href="">Coupon Options</a></li>
+                        <li ng-click="openPage('getCoupons');submitGetCoupons(true)"><a href="">Coupon Options</a></li>
                     </ul>
                 </div>
                 <!-- company menu ends -->
@@ -292,10 +292,7 @@
                                         <td>{{ coupon.type }}</td>
                                         <td>{{ coupon.message }}</td>
                                         <td>{{ coupon.price | currency}}</td>
-                                        <td>
-                                            <div>{{ coupon.image }}</div>
-                                            <div ng-show="showPicture(coupon.title)"></div>
-                                        </td>
+                                        <td>{{ coupon.image }}</td>
                                         <td>
                                             <button ng-click="purchaseCoupon(coupon)">Purchase</button>
                                         </td>
@@ -393,10 +390,10 @@
                         <div class="alert alert-danger" role="alert" ng-show="showErrorCreateCoupon">Error: {{ result }}</div>
                         <form class="form-inline">
                             <div class="form-group">
-                                <label class="sr-only" for="inputTitle">Title</label>
+                                <label class="sr-only" for="inputTitle" >Title</label>
                                 <br />
                                 <p>Title</p>
-                                <input type="text" class="form-control" ng-model="title">
+                                <input type="text" class="form-control" ng-model="title" placeholder="title (min len = 8)">
                             </div>
                             <div class="form-group">
                                 <label class="sr-only" for="inputTitle">Title</label>
@@ -430,13 +427,8 @@
                                 <label class="sr-only" for="inputTitle">image</label>
                                 <br />
                                 <p>image</p>
-                                <label class="radio-inline" ng-click="choice='URL'">
-                                    <input type="radio" name="inlineRadioOptions" id="url" value="url"> URL
-                                </label>
-                                <label class="radio-inline" ng-click="choice='Upload'">
-                                    <input type="radio" name="inlineRadioOptions" id="upload" value="upload"> Upload Image
-                                </label>
-                                <input type="file" class="form-control" id="chosenImage">
+                                			
+                                <input type="file" class="form-control" id="chosenImage" accept="image/*">
                             </div>
                             <br />
 
@@ -457,7 +449,7 @@
                                 <label class="sr-only" for="inputTitle">message</label>
                                 <br />
                                 <p>message</p>
-                                <textarea class="form-control" ng-model="message"></textarea>
+                                <textarea class="form-control" ng-model="message" placeholder="message (min len = 20)"></textarea>
                             </div>
                             <br />
                             <br />
