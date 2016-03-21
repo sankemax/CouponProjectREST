@@ -149,7 +149,7 @@ var clientModule = angular.module('client', [])
 
 			    });
 
-			}
+			} 
 
 		})
 		
@@ -173,7 +173,7 @@ var clientModule = angular.module('client', [])
                 if (type == 'text') {
                     pattern = /^[A-Za-z0-9 ]{3,20}$/;
                 } else if (type == 'email') {
-                    pattern = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{1,6}(?:\.[a-z]{1})?)$/i;
+                    pattern = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,10})\.([a-z]{1,6}(?:\.[a-z]{1})?)$/i;
                 } else if (type == 'password') {
                     pattern = /^[A-Za-z0-9!@#$%^&*()_]{3,20}$/;
                 }
@@ -238,7 +238,12 @@ var clientModule = angular.module('client', [])
 		                method: "DELETE",
 		                url: $rootScope.localHost + $rootScope.projectPath + 'admin/removecomp',
 		                headers: { 'Content-Type': 'application/json' },
-		                data: { "name": company.name, "pass": company.pass, "email": company.email }
+		                data: {
+                            "id" : company.id, 
+                            "name": company.name, 
+                            "pass": company.pass, 
+                            "email": company.email 
+                        }
 		               })
 
 					.then(function successCallback(response) {
@@ -648,8 +653,45 @@ var clientModule = angular.module('client', [])
 		        }
 		    }
 		})
-		
+        
 		.controller('customerPage', function ($rootScope, $scope, $http, $window, $timeout) {
+
+            $rootScope.imageId = [];
+            $rootScope.largeImageId = [];
+
+            // open in new window
+            $rootScope.openInNewWindow = function(index) {
+                var win = $window.open('', 'image', '_blank, width=600, height=600');
+                $(win.document.body).html($.parseHTML("<img src=\"" + $rootScope.largeImageId[index] + "\" \\>")); 
+            };
+
+            // download picture
+            $rootScope.showPicture = function getPic(clientType, coupon, original, index) {
+                
+                var imgUrl = $rootScope.localHost + $rootScope.projectPath + 'imageservice';
+                var imgParams = 
+                            '?coupname=' + coupon.title +   
+                            '&imagename=' + coupon.image +
+                            '&original=' + original + 
+                            '&type=' + clientType;
+                
+                $http({
+                        method: 'GET',
+                        url: imgUrl + imgParams,
+                        processData: false 
+                }).then(function success(response) {
+                    
+                    if (original == 'true') {
+                        $rootScope.largeImageId[index] = response.data["success"];
+                        $scope.openInNewWindow(index);
+                    } else {
+                        $rootScope.imageId[index] = response.data["success"];
+                    }
+                    
+                },function error(response) {
+                    $rootScope.imageId[index] = response.data["error"];  
+                });
+            }
 
             // filters
 		    $scope.searchByPrice = function (item) {
@@ -881,14 +923,14 @@ var clientModule = angular.module('client', [])
                     return false;
                 }
                 if (type == 'text') {
-                    pattern = /^[A-Za-z0-9 ]{8,20}$/;
+                    pattern = /^[A-Za-z0-9 ]{5,20}$/;
                     if (pattern.test(fieldValue)) return true;
                     $scope.result = "Invalid title";
                     return false;
                 }
 
                 if (type == 'message') {
-                    pattern = /^[A-Za-z0-9 ]{20,150}$/;
+                    pattern = /^[A-Za-z0-9 ]{10,150}$/;
                     if (pattern.test(fieldValue)) return true;
                     $scope.result = "Invalid message";
                     return false;
@@ -1076,6 +1118,4 @@ var clientModule = angular.module('client', [])
 
 		    $rootScope.dateFormat = 'dd-MM-yyyy';
 
-		})
-		
-		
+		})		

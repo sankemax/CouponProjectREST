@@ -1,17 +1,10 @@
 package service;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -21,13 +14,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import core.CouponSystemException;
 import core.beans.Coupon;
 import core.beans.CouponType;
 import facade.CustomerFacade;
-import utilities.ImageUtility;
 import utilities.MainUtility;
 import utilities.RestException;
 
@@ -35,29 +26,6 @@ import utilities.RestException;
 public class CustomerService {
 	
 	@Context private HttpServletRequest request;
-		
-	@GET
-	@Path("/sendimage")
-	@Produces(MediaType.MULTIPART_FORM_DATA)
-	public Response getImage(
-			@QueryParam("coupname") String couponTitle,
-			@QueryParam("imagename") String imageFile)
-					throws RestException, CouponSystemException, IOException {
-		
-		Response response;
-		Matcher matcher = Pattern.compile("^.+\\.(\\D+)$").matcher(imageFile);
-		matcher.matches();
-
-		CustomerFacade customerFacade = (CustomerFacade)MainUtility.getFacade(request, CustomerFacade.class);
-		BufferedImage image = ImageUtility.createImage(customerFacade.getImagePathOfCoupon(couponTitle), couponTitle, imageFile);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write(image, matcher.group(1), baos);
-		byte[] imageData = baos.toByteArray();
-		
-		response = Response.ok().entity(new ByteArrayInputStream(imageData)).type(MediaType.MULTIPART_FORM_DATA)
-				.header("Content-Disposition", "filename=" + imageFile).build();
-		return response;
-	}
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)

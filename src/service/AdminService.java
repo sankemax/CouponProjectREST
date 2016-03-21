@@ -20,6 +20,7 @@ import core.CouponSystemException;
 import core.beans.Company;
 import core.beans.Customer;
 import facade.AdminFacade;
+import utilities.ImageUtility;
 import utilities.MainUtility;
 import utilities.RestException;
 
@@ -49,6 +50,7 @@ public class AdminService {
 
 		Map<String, String> map = new HashMap<>();
 		AdminFacade adminFacade = (AdminFacade) MainUtility.getFacade(request, AdminFacade.class);
+		ImageUtility.removeImageFromFileSystem(null, company.getId());
 		adminFacade.removeCompany(company);
 		map.put("success", "company deleted");
 		return map;

@@ -73,7 +73,7 @@ public class CompanyService {
 
 		Map<String, String> map = new HashMap<>();
 		CompanyFacade companyFacade = (CompanyFacade) MainUtility.getFacade(request, CompanyFacade.class);
-		ImageUtility.removeImage(coupon, companyFacade.getThisCompany().getId());
+		ImageUtility.removeImageFromFileSystem(coupon, companyFacade.getThisCompany().getId());
 		companyFacade.removeCoupon(coupon);
 
 		map.put("success", "coupon removed");

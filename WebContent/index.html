@@ -292,7 +292,12 @@
                                         <td>{{ coupon.type }}</td>
                                         <td>{{ coupon.message }}</td>
                                         <td>{{ coupon.price | currency}}</td>
-                                        <td>{{ coupon.image }}</td>
+                                        <td>
+                                            <div ng-init="showPicture('customer', coupon, '100x100', $index)">
+                                                <img ng-src="{{ imageId[$index] }}" 
+                                                        ng-click="showPicture('customer', coupon, 'true', $index)" />
+                                            </div>
+                                        </td>
                                         <td>
                                             <button ng-click="purchaseCoupon(coupon)">Purchase</button>
                                         </td>
@@ -373,7 +378,12 @@
                                         <td>{{ coupon.type }}</td>
                                         <td>{{ coupon.message }}</td>
                                         <td>{{ coupon.price | currency}}</td>
-                                        <td>{{ coupon.image }}</td>
+                                        <td>
+                                            <div ng-init="showPicture('customer', coupon, '100x100', $index)">
+                                                <img ng-src="{{ imageId[$index] }}" 
+                                                        ng-click="showPicture('customer', coupon, 'true', $index)" />
+                                            </div>
+                                       </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -393,7 +403,7 @@
                                 <label class="sr-only" for="inputTitle" >Title</label>
                                 <br />
                                 <p>Title</p>
-                                <input type="text" class="form-control" ng-model="title" placeholder="title (min len = 8)">
+                                <input type="text" class="form-control" ng-model="title" placeholder="title (min len = 5)">
                             </div>
                             <div class="form-group">
                                 <label class="sr-only" for="inputTitle">Title</label>
@@ -449,7 +459,7 @@
                                 <label class="sr-only" for="inputTitle">message</label>
                                 <br />
                                 <p>message</p>
-                                <textarea class="form-control" ng-model="message" placeholder="message (min len = 20)"></textarea>
+                                <textarea class="form-control" ng-model="message" placeholder="message (min len = 10)"></textarea>
                             </div>
                             <br />
                             <br />
@@ -539,7 +549,12 @@
                                         <td ng-show="couponShowUpdate">
                                             <input type="number" step="0.01" class="form-control" ng-model="coupon.price">
                                         </td>
-                                        <td>{{ coupon.image }}</td>
+                                        <td>
+                                            <div ng-init="showPicture('company', coupon, '100x100', $index)">
+                                                <img ng-src="{{ imageId[$index] }}" 
+                                                        ng-click="showPicture('company', coupon, 'true', $index)" />
+                                            </div>
+                                        </td>
                                         <td>
                                             <button ng-click="removeCoupon(coupon)">remove</button>
                                             <button ng-click="updateCoupon(coupon, updateEndDate)">update</button>
