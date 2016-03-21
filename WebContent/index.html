@@ -11,19 +11,19 @@
 </head>
 <body>
     <div ng-app="client">
-        <div class="page-header" ng-controller="pageHeader">
-            <h1>Coupon Store <small>the next generation</small></h1>
-        <div id="logo">
-            <div ng-hide="loggedIn" id="loginInfo">
-                        Logged in as: {{ loggedInName | uppercase }}
-                        <br />
-                        Role: {{ whoIsLoggedIn }}
-            </div>
-            <div ng-controller="logout" ng-hide="loggedIn" id="logout">
-                <button type="button" class="btn btn-link" ng-click="logOut()">Logout</button>
-            </div>	
-        </div>
-        </div>
+	        <div class="jumbotron" ng-controller="pageHeader">
+	            <h1 class="main-header">Coupon Store <small>alpha</small></h1>
+	        <div id="logo">
+	            <div ng-hide="loggedIn" id="loginInfo">
+	                        Logged in as: {{ loggedInName | uppercase }}
+	                        <br />
+	                        Role: {{ whoIsLoggedIn }}
+	            </div>
+	            <div ng-controller="logout" ng-hide="loggedIn" id="logout">
+	                <button type="button" class="btn btn-link" ng-click="logOut()">Logout</button>
+	            </div>	
+	        </div>
+	        </div>
         <div ng-controller="menu" id="menu">
                 <!-- admin menu -->
                 <div ng-controller="adminMenu" id="adminMenu" ng-hide="whoIsLoggedIn!='admin'">

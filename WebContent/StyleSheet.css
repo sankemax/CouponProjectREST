@@ -34,10 +34,15 @@
     cursor: pointer;
 }
 
+.main-header {
+	margin-left:160px;
+}
+
 #logout, #login, #loginInfo {
 	font-size:14px;
 	font-family:ariel;
 	width:200px;
+	margin-left:160px;
 }
 
 #logout {
