@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -18,7 +20,12 @@ import javax.ws.rs.core.MediaType;
 import core.CouponSystemException;
 import core.beans.Coupon;
 import core.beans.CouponType;
+import core.ejb.BusinessDelegate;
+import core.ejb.Income;
+import core.enums.ClientType;
+import core.enums.IncomeType;
 import facade.CustomerFacade;
+import utilities.IncomeUtility;
 import utilities.MainUtility;
 import utilities.RestException;
 
@@ -30,11 +37,15 @@ public class CustomerService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String, String>  purchaseCoupon(Coupon coupon) throws RestException, CouponSystemException {
+	public Map<String, String>  purchaseCoupon(Coupon coupon) throws RestException, CouponSystemException, NamingException, JMSException {
 		Map<String, String> map = new HashMap<>();
 		CustomerFacade customerFacade = (CustomerFacade)MainUtility.getFacade(request, CustomerFacade.class);
 		customerFacade.purchaseCoupon(coupon);
 		map.put("success", "coupon purchased");
+		Income income = IncomeUtility.fillIncome(customerFacade.getName(), ClientType.CUSTOMER, IncomeType.CUSTOMER_PURCHASE, coupon.getPrice());
+		BusinessDelegate businessDelegate = new BusinessDelegate();
+		businessDelegate.storeIncome(income);
+		
 		return map;
 	}
 	

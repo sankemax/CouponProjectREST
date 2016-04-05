@@ -1,9 +1,12 @@
 package service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -19,6 +22,8 @@ import javax.ws.rs.core.MediaType;
 import core.CouponSystemException;
 import core.beans.Company;
 import core.beans.Customer;
+import core.ejb.BusinessDelegate;
+import core.ejb.Income;
 import facade.AdminFacade;
 import utilities.ImageUtility;
 import utilities.MainUtility;
@@ -98,9 +103,9 @@ public class AdminService {
 	public Map<String, String> createCustomer(Customer customer) throws RestException, CouponSystemException{
 
 		Map<String, String> map = new HashMap<>();
-			AdminFacade adminFacade = (AdminFacade)MainUtility.getFacade(request, AdminFacade.class);
-			adminFacade.createCustomer(customer);
-			map.put("success", "customer created");
+		AdminFacade adminFacade = (AdminFacade) MainUtility.getFacade(request, AdminFacade.class);
+		adminFacade.createCustomer(customer);
+		map.put("success", "customer created");
 		return map;
 	}
 	
@@ -111,9 +116,9 @@ public class AdminService {
 	public Map<String, String> removeCustomer(Customer customer) throws RestException, CouponSystemException{
 		
 		Map<String, String> map = new HashMap<>();
-			AdminFacade adminFacade = (AdminFacade)MainUtility.getFacade(request, AdminFacade.class);
-			adminFacade.removeCustomer(customer);
-			map.put("success", "customer removed");
+		AdminFacade adminFacade = (AdminFacade) MainUtility.getFacade(request, AdminFacade.class);
+		adminFacade.removeCustomer(customer);
+		map.put("success", "customer removed");
 		return map;
 	}
 	
@@ -124,9 +129,9 @@ public class AdminService {
 	public Map<String, String> updateCustomer(Customer customer) throws RestException, CouponSystemException{
 
 		Map<String, String> map = new HashMap<>();
-			AdminFacade adminFacade = (AdminFacade)MainUtility.getFacade(request, AdminFacade.class);
-			adminFacade.updateCustomer(customer);
-			map.put("success", "custmer updated");
+		AdminFacade adminFacade = (AdminFacade) MainUtility.getFacade(request, AdminFacade.class);
+		adminFacade.updateCustomer(customer);
+		map.put("success", "custmer updated");
 		return map;
 	}
 	
@@ -136,8 +141,8 @@ public class AdminService {
 	public Map<String, Customer> getCustomer(@QueryParam("id") long id) throws RestException, CouponSystemException{
 
 		Map<String, Customer> map = new HashMap<>();
-			AdminFacade adminFacade = (AdminFacade)MainUtility.getFacade(request, AdminFacade.class);
-			map.put("customer", adminFacade.getCustomer(id));
+		AdminFacade adminFacade = (AdminFacade) MainUtility.getFacade(request, AdminFacade.class);
+		map.put("customer", adminFacade.getCustomer(id));
 		return map;
 	}
 	
@@ -147,8 +152,8 @@ public class AdminService {
 	public Map<String, List<Customer>> gatAllCustomer() throws RestException, CouponSystemException{
 		
 		Map<String, List<Customer>> map = new HashMap<>();
-			AdminFacade adminFacade = (AdminFacade)MainUtility.getFacade(request, AdminFacade.class);
-			map.put("customers", adminFacade.getAllCustomers());
+		AdminFacade adminFacade = (AdminFacade) MainUtility.getFacade(request, AdminFacade.class);
+		map.put("customers", adminFacade.getAllCustomers());
 		return map;
 	}
 	
@@ -158,8 +163,8 @@ public class AdminService {
 	public Map<String, Customer> getCustomerByName(@QueryParam("name") String name) throws RestException, CouponSystemException{
 
 		Map<String, Customer> map = new HashMap<>();
-			AdminFacade adminFacade = (AdminFacade)MainUtility.getFacade(request, AdminFacade.class);
-			map.put("customer", adminFacade.getCustomerByName(name));
+		AdminFacade adminFacade = (AdminFacade) MainUtility.getFacade(request, AdminFacade.class);
+		map.put("customer", adminFacade.getCustomerByName(name));
 		return map;
 	}
 	
@@ -169,9 +174,34 @@ public class AdminService {
 	public Map<String, Company> getCompanyByName(@QueryParam("name") String name) throws RestException, CouponSystemException{
 
 		Map<String, Company> map = new HashMap<>();
-			AdminFacade adminFacade = (AdminFacade)MainUtility.getFacade(request, AdminFacade.class);
-			map.put("company", adminFacade.getCompanyByName(name));
+		AdminFacade adminFacade = (AdminFacade) MainUtility.getFacade(request, AdminFacade.class);
+		map.put("company", adminFacade.getCompanyByName(name));
 		return map;
 	}
 	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/allincome")
+	public Map<String, Collection<Income>> getSystemIncome() throws RestException, NamingException, JMSException {
+		
+		Map<String, Collection<Income>> map = new HashMap<>();
+		@SuppressWarnings("unused") // i call admin facade for SESSION VALIDATION LOGIC
+		AdminFacade adminFacade = (AdminFacade) MainUtility.getFacade(request, AdminFacade.class);
+		BusinessDelegate bd = new BusinessDelegate();
+		map.put("income", bd.viewAllIncome());
+		return map;
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/customerincome")
+	public Map<String, Collection<Income>> getCustomerIncome(@QueryParam("name") String name) throws RestException, NamingException, JMSException {
+		
+		Map<String, Collection<Income>> map = new HashMap<>();
+		@SuppressWarnings("unused") // i call admin facade for SESSION VALIDATION LOGIC
+		AdminFacade adminFacade = (AdminFacade) MainUtility.getFacade(request, AdminFacade.class);
+		BusinessDelegate bd = new BusinessDelegate();
+		map.put("income", bd.viewCustomerIncome(name));
+		return map;
+	}
 }

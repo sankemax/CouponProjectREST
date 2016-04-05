@@ -2,10 +2,14 @@ package service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.jms.JMSException;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -25,8 +29,13 @@ import core.CouponSystemException;
 import core.beans.Company;
 import core.beans.Coupon;
 import core.beans.CouponType;
+import core.ejb.BusinessDelegate;
+import core.ejb.Income;
+import core.enums.ClientType;
+import core.enums.IncomeType;
 import facade.CompanyFacade;
 import utilities.ImageUtility;
+import utilities.IncomeUtility;
 import utilities.MainUtility;
 import utilities.RestException;
 
@@ -49,7 +58,6 @@ public class CompanyService {
 		
 		CompanyFacade companyFacade = (CompanyFacade) MainUtility.getFacade(request, CompanyFacade.class);
 		ImageUtility.uploadImage(companyFacade.getThisCompany().getId(), couponTitle, fileDetail , uploadedInputStream);
-		
 
 		map.put("success", fileDetail.getFileName());
 		return map;
@@ -58,10 +66,13 @@ public class CompanyService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String, String> createCoupon(Coupon coupon) throws RestException, CouponSystemException {
+	public Map<String, String> createCoupon(Coupon coupon) throws RestException, CouponSystemException, NamingException, JMSException {
 		Map<String, String> map = new HashMap<>();
 		CompanyFacade companyFacade = (CompanyFacade) MainUtility.getFacade(request, CompanyFacade.class);
 		companyFacade.createCoupon(coupon);
+		BusinessDelegate bd = new BusinessDelegate();
+		Income income = IncomeUtility.fillIncome(companyFacade.getName(), ClientType.COMPANY, IncomeType.COMPANY_NEW_COUPON, 100);
+		bd.storeIncome(income);
 		map.put("success", "coupon created");
 		return map;
 	}
@@ -83,10 +94,13 @@ public class CompanyService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String, String> updateCoupon(Coupon coupon) throws RestException, CouponSystemException {
+	public Map<String, String> updateCoupon(Coupon coupon) throws RestException, CouponSystemException, NamingException, JMSException {
 		Map<String, String> map = new HashMap<>();
 		CompanyFacade companyFacade = (CompanyFacade) MainUtility.getFacade(request, CompanyFacade.class);
 		companyFacade.updateCoupon(coupon);
+		Income income = IncomeUtility.fillIncome(companyFacade.getName(), ClientType.COMPANY, IncomeType.COMPANY_UPDATE_COUPON, 10);
+		BusinessDelegate bd = new BusinessDelegate();
+		bd.storeIncome(income);
 		map.put("success", "coupon updated");
 		return map;
 	}
@@ -166,5 +180,17 @@ public class CompanyService {
 		map.put("company", companyFacade.getThisCompany());
 		return map;
 	}
-
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/income")
+	public Map<String, Collection<Income>> getCompanyIncome(@QueryParam("name") String name) throws RestException, NamingException, JMSException {
+		
+		Map<String, Collection<Income>> map = new HashMap<>();
+		@SuppressWarnings("unused") // i call admin facade for SESSION VALIDATION LOGIC
+		CompanyFacade companyFacade = (CompanyFacade) MainUtility.getFacade(request, CompanyFacade.class);
+		BusinessDelegate bd = new BusinessDelegate();
+		map.put("income", bd.viewCompanyIncome(name));
+		return map;
+	}
 }

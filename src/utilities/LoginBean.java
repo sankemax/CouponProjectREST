@@ -9,9 +9,9 @@ import core.ClientType;
 @XmlRootElement
 public class LoginBean {
 	
-	@JsonProperty("name") private String name;
-	@JsonProperty("pass") private String password;
-	@JsonProperty("type") private ClientType type;
+	private String name;
+	private String password;
+	private ClientType type;
 
 	public LoginBean() {}
 	
