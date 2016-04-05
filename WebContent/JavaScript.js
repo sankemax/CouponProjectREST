@@ -829,7 +829,6 @@ var clientModule = angular.module('client', [])
                 
 		        if ($scope.inputValidationCoupon($scope.title, 'text') && $scope.inputValidationCoupon($scope.message, 'message') &&
                     $scope.inputValidationCoupon($scope.amount, 'number') && $scope.inputValidationCoupon($scope.price, 'number') &&
-                    $scope.inputValidationCoupon($scope.startDate, 'date') && $scope.inputValidationCoupon($scope.endDate, 'date') &&
                     $scope.inputValidationCoupon($scope.type, 'type') && $scope.inputValidationCoupon($('#chosenImage')[0].value, 'image') &&
                     $scope.inputValidationDate($scope.startDate, $scope.endDate)) {
 
@@ -873,6 +872,7 @@ var clientModule = angular.module('client', [])
 
                 })} else {
 		           
+                	$scope.result = "Incorrect Input";
 		            $scope.errorCouponCreate();
 		        };
     
@@ -912,7 +912,7 @@ var clientModule = angular.module('client', [])
 
             $scope.inputValidationCoupon = function (fieldValue, type) {
                 var pattern;
-                if (fieldValue == undefined && fieldValue == null) {
+                if (fieldValue == undefined || fieldValue == null) {
                     $scope.result = "Fill in the form";
                     
                     return false;
@@ -923,7 +923,7 @@ var clientModule = angular.module('client', [])
                     return false;
                 }
                 if (type == 'text') {
-                    pattern = /^[A-Za-z0-9 ]{5,20}$/;
+                    pattern = /^[A-Za-z0-9 ]{5,30}$/;
                     if (pattern.test(fieldValue)) return true;
                     $scope.result = "Invalid title";
                     return false;
